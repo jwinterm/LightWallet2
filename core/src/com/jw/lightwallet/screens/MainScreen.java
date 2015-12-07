@@ -13,23 +13,28 @@ public class MainScreen extends AbstractScreen {
 	Table			screenlayout;
 	TextButton		daemonbutton;
 	TextButton		walletbutton;
+	// Daemon layout
 	Table			daemonlayout;
-	
-	// Bitmonerod info variables
-	int				blockheight;
-	int				diff;
-	int				hashrate;
-	float			blockreward;
 
 	public MainScreen(LightWallet game) {
 		super(game);
 		
 		daemonrpc = new DaemonRPC();
+		daemonrpc.getinfo();
 
 	}
 	
 	public void show() {
 		super.show();
+		
+	}
+	
+	public void render(float delta) {
+		super.render(delta);
+		
+	}
+	
+	public void dispose() {
 		
 	}
 
