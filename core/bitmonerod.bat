@@ -1,0 +1,1 @@
+bitmonerod.exe --data-dir=D:\wallets\monero\data

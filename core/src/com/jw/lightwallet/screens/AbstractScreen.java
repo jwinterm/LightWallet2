@@ -12,7 +12,7 @@ public class AbstractScreen implements Screen {
 	protected float 	w;
 	protected float 	h;
 	protected float 	aspect;
-	protected long 		screenShowTime;
+	protected float		accumulator;
 	
 	public AbstractScreen (LightWallet game) {
 		this.game = game;
@@ -20,6 +20,7 @@ public class AbstractScreen implements Screen {
 		this.w = Gdx.graphics.getWidth();
 		this.h = Gdx.graphics.getHeight();
 		this.aspect = w/h;
+		this.accumulator = 0;
 	}
 
 	@Override
@@ -31,7 +32,8 @@ public class AbstractScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);		
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);	
+		accumulator = accumulator + delta;
 	}
 
 	@Override
