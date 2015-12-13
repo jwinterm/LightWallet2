@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.jw.lightwallet.utils.Constants;
 import com.jw.lightwallet.utils.DaemonValues;
+
+import java.text.DecimalFormat;
 import java.util.Date;
 
 public class DaemonView {
@@ -73,9 +75,9 @@ public class DaemonView {
 		nodevalue.setText(Constants.moneroclub);
 		statusvalue.setText(daemonvalues.getStatus());
 		heightvalue.setText(String.valueOf(daemonvalues.getBlockheight()));
-		hashratevalue.setText(String.valueOf(daemonvalues.getHashrate() + " Mh/s"));
+		hashratevalue.setText(new DecimalFormat("##.##").format(daemonvalues.getHashrate()) + " Mh/s");
 		timevalue.setText(String.valueOf(new java.util.Date(daemonvalues.getLastblocktime()*1000)));
-		rewardvalue.setText(String.valueOf(daemonvalues.getLastblockreward()/1e12 + " XMR"));
+		rewardvalue.setText(new DecimalFormat("##.##").format(daemonvalues.getLastblockreward()/1e12) + " XMR");
 	}
 
 }
