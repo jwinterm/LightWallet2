@@ -2,11 +2,11 @@ package com.jw.lightwallet.utils;
 
 public class DaemonValues {
 	
-	int blockheight;
-	int diff;
-	int hashrate;
-	int lastblocktime;
-	int lastblockreward;
+	int 	blockheight;
+	int 	diff;
+	int 	hashrate;
+	long 	lastblocktime;
+	long	lastblockreward;
 	String status;
 	
 	
@@ -24,21 +24,21 @@ public class DaemonValues {
 		this.diff = diff;
 		this.hashrate = diff/60;
 	}
-	public int getHashrate() {
-		return hashrate;
+	public float getHashrate() {
+		return hashrate/1e6f;
 	}
 
-	public int getLastblocktime() {
+	public long getLastblocktime() {
 		return lastblocktime;
 	}
-	public void setLastblocktime(int lastblocktime) {
+	public void setLastblocktime(long lastblocktime) {
 		this.lastblocktime = lastblocktime;
 	}
 	
-	public float getLastblockreward() {
-		return lastblockreward/1e12f;
+	public long getLastblockreward() {
+		return lastblockreward;
 	}
-	public void setLastblockreward(int lastblockreward) {
+	public void setLastblockreward(long lastblockreward) {
 		this.lastblockreward = lastblockreward;
 	}
 	

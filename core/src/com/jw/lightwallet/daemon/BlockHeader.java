@@ -11,8 +11,8 @@ public class BlockHeader {
 	int			nonce;
 	boolean		orphan_status;
 	String		prev_hash;
-	int			reward;
-	int			timestamp;
+	long		reward;
+	long		timestamp;
 	
 	
 	public int getDepth() {
@@ -69,16 +69,16 @@ public class BlockHeader {
 	public void setPrev_hash(String prev_hash) {
 		this.prev_hash = prev_hash;
 	}
-	public int getReward() {
+	public long getReward() {
 		return reward;
 	}
-	public void setReward(int reward) {
+	public void setReward(long reward) {
 		this.reward = reward;
 	}
-	public int getTimestamp() {
+	public long getTimestamp() {
 		return timestamp;
 	}
-	public void setTimestamp(int timestamp) {
+	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
 	

@@ -68,7 +68,7 @@ public class MainScreen extends AbstractScreen {
 		buttonrow.add(txhistorybutton).width(Constants.WORLD_WIDTH/4);
 		screenlayout.add(buttonrow).row();
 		
-		screenlayout.add(logo).center().row();
+		screenlayout.add(logo).pad(10).center().row();
 
 		daemonview = new DaemonView();
 		viewcontainer.add(daemonview.daemonlayout).expand().bottom();
