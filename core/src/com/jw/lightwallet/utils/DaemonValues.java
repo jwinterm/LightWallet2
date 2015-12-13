@@ -35,8 +35,8 @@ public class DaemonValues {
 		this.lastblocktime = lastblocktime;
 	}
 	
-	public int getLastblockreward() {
-		return lastblockreward;
+	public float getLastblockreward() {
+		return lastblockreward/1e12f;
 	}
 	public void setLastblockreward(int lastblockreward) {
 		this.lastblockreward = lastblockreward;
