@@ -2,12 +2,13 @@ package com.jw.lightwallet.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
 import com.jw.lightwallet.LightWallet;
 import com.jw.lightwallet.daemon.DaemonRPC;
@@ -19,23 +20,24 @@ public class MainScreen extends AbstractScreen {
 	// Interface classes
 	DaemonRPC			daemonrpc;
 	DaemonValues		daemonvalues;
+	
 	// Layout stuff
 	Stage				stage;
 	Table				screenlayout;
 	
 	Image				logo;
 	Texture				logotex;
+	
 	Table				buttonrow;
 	TextButton			daemonbutton;
 	TextButton			walletbutton;
 	TextButton			transferbutton;
 	TextButton			txhistorybutton;
+	
 	Table				viewcontainer;
 	DaemonView			daemonview;
+	WalletView			walletview;
 
-	// Wallet layout
-	// Transfer layout
-	// Tx history layout
 	// Timer
 	Timer			timer;
 
@@ -50,6 +52,7 @@ public class MainScreen extends AbstractScreen {
 		daemonvalues = new DaemonValues();
 
 		stage = new Stage();
+		Gdx.input.setInputProcessor(stage);
 		
 		screenlayout = new Table();
 		viewcontainer = new Table();
@@ -58,9 +61,37 @@ public class MainScreen extends AbstractScreen {
 
 		buttonrow		= new Table();
 		daemonbutton = new TextButton("Daemon", uiSkin);
+		daemonbutton.addListener(new ClickListener() {
+	        @Override
+	        public void clicked (InputEvent event, float x, float y) {
+	            System.out.println("Daemon button Pressed");
+	            viewcontainer.removeActor(walletview.walletlayout);
+	            viewcontainer.add(daemonview.daemonlayout).expand().bottom();
+	        }
+	    });
 		walletbutton = new TextButton("Wallet", uiSkin);
+		walletbutton.addListener(new ClickListener() {
+	        @Override
+	        public void clicked (InputEvent event, float x, float y) {
+	            System.out.println("Wallet button Pressed");
+	            viewcontainer.removeActor(daemonview.daemonlayout);
+	            viewcontainer.add(walletview.walletlayout).expand().bottom();
+	        }
+	    });		
 		transferbutton = new TextButton("Transfer", uiSkin);
+		transferbutton.addListener(new ClickListener() {
+	        @Override
+	        public void clicked (InputEvent event, float x, float y) {
+	            System.out.println("Transfer button Pressed");
+	        }
+	    });		
 		txhistorybutton = new TextButton("History", uiSkin);
+		txhistorybutton.addListener(new ClickListener() {
+	        @Override
+	        public void clicked (InputEvent event, float x, float y) {
+	            System.out.println("History button Pressed");
+	        }
+	    });		
 		
 		buttonrow.add(daemonbutton).width(Constants.WORLD_WIDTH/4);
 		buttonrow.add(walletbutton).width(Constants.WORLD_WIDTH/4);
@@ -71,6 +102,7 @@ public class MainScreen extends AbstractScreen {
 		screenlayout.add(logo).pad(10).center().row();
 
 		daemonview = new DaemonView();
+		walletview = new WalletView();
 		viewcontainer.add(daemonview.daemonlayout).expand().bottom();
 		screenlayout.add(viewcontainer);
 		

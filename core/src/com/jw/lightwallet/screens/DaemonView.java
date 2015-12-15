@@ -1,8 +1,6 @@
 package com.jw.lightwallet.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -10,7 +8,6 @@ import com.jw.lightwallet.utils.Constants;
 import com.jw.lightwallet.utils.DaemonValues;
 
 import java.text.DecimalFormat;
-import java.util.Date;
 
 public class DaemonView {
 	
