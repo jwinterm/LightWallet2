@@ -14,7 +14,7 @@ public class AbstractScreen implements Screen {
 	protected float 	aspect;
 	protected float		accumulator;
 	
-	public AbstractScreen (LightWallet game) {
+	public AbstractScreen (final LightWallet game) {
 		this.game = game;
 		this.font = new BitmapFont(Gdx.files.internal("fonts/bauchaomaicha.fnt"));
 		this.w = Gdx.graphics.getWidth();
@@ -26,7 +26,7 @@ public class AbstractScreen implements Screen {
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		
+		Gdx.app.log(LightWallet.LOG, "Showing screen: " + this.getClass().getName());
 	}
 
 	@Override
@@ -39,31 +39,31 @@ public class AbstractScreen implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-		
+		Gdx.app.log(LightWallet.LOG, "Resizing screen " + this.getClass().getName() + " to " + width + ", " + height);
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		
+		Gdx.app.log(LightWallet.LOG, "Pausing screen: " + this.getClass().getName());
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		
+		Gdx.app.log(LightWallet.LOG, "Resuming screen: " + this.getClass().getName());
 	}
 
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
-		
+		Gdx.app.log(LightWallet.LOG, "Hiding screen: " + this.getClass().getName());
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+		Gdx.app.log(LightWallet.LOG, "Disposing screen: " + this.getClass().getName());
 	}
 
 }

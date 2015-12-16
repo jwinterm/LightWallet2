@@ -41,7 +41,7 @@ public class MainScreen extends AbstractScreen {
 	// Timer
 	Timer			timer;
 
-	public MainScreen(LightWallet game) {
+	public MainScreen(final LightWallet game) {
 		super(game);
 		
 		timer = new Timer();
@@ -132,6 +132,7 @@ public class MainScreen extends AbstractScreen {
 	}
 	
 	public void dispose() {
+		super.dispose();
 		
 	}
 	
