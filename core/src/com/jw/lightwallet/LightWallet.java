@@ -11,7 +11,10 @@ import com.jw.lightwallet.screens.MainScreen;
 import com.jw.lightwallet.screens.WizardScreen;
 
 public class LightWallet extends Game {
-	public static final String LOG = LightWallet.class.getSimpleName(); // Logging constant
+	
+	public static final String 	LOG = LightWallet.class.getSimpleName(); // Logging constant
+	
+	public String				dir;
 
 	// Set screen methods
 	public MainScreen getMainScreen(){
@@ -34,6 +37,9 @@ public class LightWallet extends Game {
 	public void create () {
 		// Initialize logger
 		Gdx.app.log(LightWallet.LOG, "Launching application");
+		
+		// Get directory where program launched
+		dir = System.getProperty("user.dir");
 		
 		// Check if config file exists, if not launch setup wizard
 		File f = new File("lightwallet.conf");
