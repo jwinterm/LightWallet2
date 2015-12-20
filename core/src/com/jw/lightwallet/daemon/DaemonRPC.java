@@ -27,9 +27,9 @@ public class DaemonRPC {
 		Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {
 		        public void handleHttpResponse(HttpResponse httpResponse) {
 		                response = httpResponse.getResultAsString();
-		                System.out.print("1st time response" + response);
+		                //System.out.print("1st time response" + response);
 		                DaemonResponse daemonresponse = new Gson().fromJson(response, DaemonResponse.class);
-		                System.out.print("GSON response is" + daemonresponse.getId());
+		                //System.out.print("GSON response is" + daemonresponse.getId());
 		                daemonvalues.setBlockheight(daemonresponse.getResult().getBlock_header().getHeight());
 		                daemonvalues.setDiff(daemonresponse.getResult().getBlock_header().getDifficulty());
 		                daemonvalues.setLastblocktime(daemonresponse.getResult().getBlock_header().getTimestamp());
@@ -39,7 +39,7 @@ public class DaemonRPC {
 		 
 		        public void failed(Throwable t) {
 		                response = "failed";
-		                System.out.print("Failed response status is: " + response);
+		                //System.out.print("Failed response status is: " + response);
 		                //do stuff here based on the failed attempt
 		        }
 

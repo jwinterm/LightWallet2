@@ -61,7 +61,7 @@ public class WizardScreen extends AbstractScreen {
 		createbutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
-	            game.setScreen(game.getCreateScreen());
+	            game.setScreen(new CreateScreen(game));
 	        }
 	    });
 		createbutton.pad(padvalue);
@@ -70,7 +70,7 @@ public class WizardScreen extends AbstractScreen {
 		importkeysbutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
-	        	game.setScreen(game.getImportKeysScreen());
+	        	game.setScreen(new ImportKeysScreen(game));
 	        }
 	    });
 		importkeysbutton.pad(padvalue);
@@ -79,7 +79,7 @@ public class WizardScreen extends AbstractScreen {
 		importseedbutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
-	        	game.setScreen(game.getImportSeedScreen());
+	        	game.setScreen(new ImportSeedScreen(game));
 	        }
 	    });
 		importseedbutton.pad(padvalue);

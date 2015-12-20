@@ -119,7 +119,7 @@ public class MainScreen extends AbstractScreen {
 				daemonrpc.getinfo(daemonvalues);
 				daemonview.Update(daemonvalues);
 			}
-		}, 1f, 5f);
+		}, 1f, 10f);
 		
 	}
 	
