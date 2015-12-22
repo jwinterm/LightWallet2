@@ -1,4 +1,4 @@
-package com.jw.lightwallet.daemon;
+ package com.jw.lightwallet.daemon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;

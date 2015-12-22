@@ -1,10 +1,14 @@
 package com.jw.lightwallet;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.jw.lightwallet.screens.MainScreen;
+import com.jw.lightwallet.screens.PasswordScreen;
 import com.jw.lightwallet.screens.WizardScreen;
 import com.jw.lightwallet.utils.WalletValues;
 
@@ -38,9 +42,24 @@ public class LightWallet extends Game {
 		
 		// Check if config file exists, if not launch setup wizard
 		File f = new File("lightwallet.conf");
+		
 		if(f.exists() && !f.isDirectory()) { 
-			setScreen(new MainScreen(this));
+			try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+			    String line;
+			    while ((line = br.readLine()) != null) {
+				       if (line.contains("name: ")) {walletvalues.setName(line.split("name: ")[1]);}
+				       if (line.contains("Wallet address: ")) {walletvalues.setAddress(line.split("address: ")[1]);}
+				       if (line.contains("view key: ")) {walletvalues.setViewkey(line.split("view key: ")[1]);}
+				       if (line.contains("Node address: ")) {walletvalues.setNode(line.split("address: ")[1]);}
+			    }
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    Gdx.app.log(LightWallet.LOG, "Node address on startup is: " + walletvalues.getAddress());
+			setScreen(new PasswordScreen(this));
 		} 
+		
 		else {setScreen(new WizardScreen(this));}
 		
 	}

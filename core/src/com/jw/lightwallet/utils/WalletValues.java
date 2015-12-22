@@ -7,7 +7,10 @@ public class WalletValues {
 	String		address;
 	String		viewkey;
 	String		seed;
+	String		node;
+
 	
+
 	public String getName() {
 		return name;
 	}
@@ -38,7 +41,12 @@ public class WalletValues {
 	public void setSeed(String seed) {
 		this.seed = seed;
 	}
-	
-	
+	public String getNode() {
+		return node;
+	}
+	public void setNode(String node) {
+		this.node = node;
+	}
+
 
 }

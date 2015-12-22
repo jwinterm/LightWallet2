@@ -93,7 +93,7 @@ public class CreateScreen extends AbstractScreen {
 		pwrpttext.setPasswordMode(true);
 		pwrpttext.setPasswordCharacter((char) 42);
 		nodelabel		= new Label("Node address: ", uiSkin);
-		nodetext		= new TextField(Constants.moneroclub, uiSkin);
+		nodetext		= new TextField(Constants.moneroclubdmn, uiSkin);
 		inputtable.add(namelabel).width(200);
 		inputtable.add(nametext).width(400).row();
 		inputtable.add(pwlabel).width(200);
@@ -229,6 +229,7 @@ public class CreateScreen extends AbstractScreen {
 	            game.walletvalues.setName(name);
 	            game.walletvalues.setPw(pw);
 	            game.walletvalues.setSeed(seed);
+	            game.walletvalues.setNode(nodetext.getText());;
 	            
 	            PrintWriter infowriter = new PrintWriter(name + "info.txt", "UTF-8");
 	            infowriter.println("Wallet name: " + name);

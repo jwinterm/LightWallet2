@@ -1,10 +1,12 @@
-package com.jw.lightwallet.daemon;
+package com.jw.lightwallet.wallet;
 
-public class DaemonResponse {
+import com.jw.lightwallet.wallet.BalanceResult;
+
+public class BalanceResponse {
 
 	String id;
 	String jsonrpc;
-	DaemonResult result;
+	BalanceResult result;
 	
 	public String getId() {
 		return id;
@@ -18,11 +20,12 @@ public class DaemonResponse {
 	public void setJsonrpc(String jsonrpc) {
 		this.jsonrpc = jsonrpc;
 	}
-	public DaemonResult getResult() {
+	public BalanceResult getResult() {
 		return result;
 	}
-	public void setResult(DaemonResult result) {
+	public void setResult(BalanceResult result) {
 		this.result = result;
 	}
 
+	
 }

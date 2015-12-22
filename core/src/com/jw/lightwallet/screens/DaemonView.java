@@ -69,7 +69,7 @@ public class DaemonView {
 	}
 	
 	public void Update(DaemonValues daemonvalues) {
-		nodevalue.setText(Constants.moneroclub);
+		nodevalue.setText(Constants.moneroclubdmn);
 		statusvalue.setText(daemonvalues.getStatus());
 		heightvalue.setText(String.valueOf(daemonvalues.getBlockheight()));
 		hashratevalue.setText(new DecimalFormat("##.##").format(daemonvalues.getHashrate()) + " Mh/s");
