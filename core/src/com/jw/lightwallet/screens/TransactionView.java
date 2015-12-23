@@ -31,27 +31,30 @@ public class TransactionView {
 		Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
 		txlayout 		= new Table();
-		padvalue			= 15;
+		padvalue		= 15;
 
-		addresslabel 			= new Label("Send to address: ", uiSkin);
-		addressvalue			= new TextField("", uiSkin);
-		txlayout.add(addresslabel).pad(padvalue);
-		txlayout.add(addressvalue).pad(padvalue).row();
+		addresslabel 	= new Label("Send to address: ", uiSkin);
+		addressvalue	= new TextField("", uiSkin);
+		txlayout.add(addresslabel).pad(padvalue).width(150);
+		txlayout.add(addressvalue).pad(padvalue).width(650).row();
 		
-		amountlabel 			= new Label("Send amount XMR: ", uiSkin);
-		amountvalue			= new TextField("", uiSkin);
-		txlayout.add(amountlabel).pad(padvalue);
-		txlayout.add(amountvalue).pad(padvalue).row();
+		amountlabel 	= new Label("Send amount XMR: ", uiSkin);
+		amountvalue		= new TextField("", uiSkin);
+		txlayout.add(amountlabel).pad(padvalue).width(150);
+		txlayout.add(amountvalue).pad(padvalue).width(650).row();
 		
-		mixinlabel 			= new Label("Mixin level: ", uiSkin);
-		mixinvalue			= new TextField("", uiSkin);
-		txlayout.add(mixinlabel).pad(padvalue);
-		txlayout.add(mixinvalue).pad(padvalue).row();
+		mixinlabel 		= new Label("Mixin level: ", uiSkin);
+		mixinvalue		= new TextField("", uiSkin);
+		txlayout.add(mixinlabel).pad(padvalue).width(150);
+		txlayout.add(mixinvalue).pad(padvalue).width(650).row();
 		
-		idlabel 			= new Label("Payment id: ", uiSkin);
+		idlabel 		= new Label("Payment id: ", uiSkin);
 		idvalue			= new TextField("", uiSkin);
-		txlayout.add(idlabel).pad(padvalue);
-		txlayout.add(idvalue).pad(padvalue).row();
+		txlayout.add(idlabel).pad(padvalue).width(150);
+		txlayout.add(idvalue).pad(padvalue).width(650).row();
+		
+		sendbtn			= new TextButton("Payola!", uiSkin);
+		txlayout.add(sendbtn).row();
 
 		
 	}

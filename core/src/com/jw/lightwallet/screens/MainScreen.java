@@ -192,9 +192,12 @@ public class MainScreen extends AbstractScreen {
 				String queuepoll = wq.poll();
 				Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
 				try{
-					
-					if (queuepoll != null && queuepoll.contains("height")) {
+					if (queuepoll != null && queuepoll.contains("height:")) {
 						String height = queuepoll.split("height: ")[1].split(",")[0];
+						walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
+					}
+					else if (queuepoll != null && queuepoll.contains("height ")) {
+						String height = queuepoll.split("height ")[1].split(",")[0];
 						walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
 					}
 				} catch (NullPointerException e){e.printStackTrace();}

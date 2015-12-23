@@ -1,9 +1,12 @@
 package com.jw.lightwallet.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.jw.lightwallet.LightWallet;
 
 public class WalletView {
@@ -12,7 +15,7 @@ public class WalletView {
 	
 	Label		namelabel;
 	Label		namevalue;	
-	Label		addresslabel;
+	TextButton	addresslabel;
 	Label		addressvalue;
 	Label		synclabel;
 	Label		syncvalue;
@@ -24,7 +27,7 @@ public class WalletView {
 	int 		padvalue;
 
 
-	public WalletView (LightWallet game) {
+	public WalletView (final LightWallet game) {
 		
 		Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
@@ -36,9 +39,9 @@ public class WalletView {
 		walletlayout.add(namelabel).pad(padvalue);
 		walletlayout.add(namevalue).pad(padvalue).row();
 		
-		addresslabel 		= new Label("Address: ", uiSkin);
+		addresslabel 		= new TextButton("Address (click to copy): ", uiSkin);
 		addressvalue		= new Label(game.walletvalues.getAddress(), uiSkin);
-		addressvalue.setFontScale(0.2f, 0.2f);
+		addressvalue.setFontScale(0.6f, 0.6f);
 		walletlayout.add(addresslabel).pad(padvalue);
 		walletlayout.add(addressvalue).pad(padvalue).row();
 		
@@ -56,6 +59,13 @@ public class WalletView {
 		lockedvalue			= new Label("Loading...", uiSkin, "redlabel");
 		walletlayout.add(lockedlabel).pad(padvalue);
 		walletlayout.add(lockedvalue).pad(padvalue).row();
+		
+		addresslabel.addListener(new ClickListener() {
+	        @Override
+	        public void clicked (InputEvent event, float x, float y) {
+	        	Gdx.app.getClipboard().setContents(game.walletvalues.getAddress());
+	        }
+	    });	
 		
 	}
 }
