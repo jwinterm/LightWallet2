@@ -53,6 +53,7 @@ public class MainScreen extends AbstractScreen {
 	// Timers
 	Timer				daemontimer;
 	Timer				wallettimer;
+	Timer				balancetimer;
 	
 	// Wallet thread and queue stuff
 	Process				wp;
@@ -65,9 +66,9 @@ public class MainScreen extends AbstractScreen {
 		
 		daemontimer 	= new Timer();
 		wallettimer		= new Timer();
-		
-		wq 				= new AtomicQueue<String>(10);
-				
+		wq 				= new AtomicQueue<String>(100);
+		balancetimer	= new Timer();
+						
 		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
 		daemonrpc 		= new DaemonRPC();
@@ -200,12 +201,17 @@ public class MainScreen extends AbstractScreen {
 						String height = queuepoll.split("height ")[1].split(",")[0];
 						walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
 					}
-				} catch (NullPointerException e){e.printStackTrace();}
-				
-				balancerpc.getinfo(balancevalues);
-				
+				} catch (NullPointerException e){e.printStackTrace();}				
 			}
-		}, 1f, 1f);
+		}, 1f, 0.05f);
+		
+		// Timer task to get network info from daemon
+		balancetimer.scheduleTask(new Timer.Task() {
+			@Override
+			public void run() {
+				balancerpc.getinfo(balancevalues);
+			}
+		}, 1f, 5f);
 		
 	}
 	
