@@ -4,12 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.jw.lightwallet.utils.Constants;
+import com.jw.lightwallet.LightWallet;
 import com.jw.lightwallet.utils.DaemonValues;
 
 import java.text.DecimalFormat;
 
 public class DaemonView {
+	
+	LightWallet game;
 	
 	Table		daemonlayout;
 	
@@ -29,9 +31,11 @@ public class DaemonView {
 	int 		padvalue;
 
 
-	public DaemonView () {
+	public DaemonView (final LightWallet game) {
+	
+	this.game		= game;
 		
-	Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+	Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
 	daemonlayout 	= new Table();
 	padvalue		= 15;
@@ -69,7 +73,7 @@ public class DaemonView {
 	}
 	
 	public void Update(DaemonValues daemonvalues) {
-		nodevalue.setText(Constants.moneroclubdmn);
+		nodevalue.setText(game.walletvalues.getNode());
 		statusvalue.setText(daemonvalues.getStatus());
 		heightvalue.setText(String.valueOf(daemonvalues.getBlockheight()));
 		hashratevalue.setText(new DecimalFormat("##.##").format(daemonvalues.getHashrate()) + " Mh/s");

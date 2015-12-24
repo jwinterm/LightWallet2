@@ -1,8 +1,11 @@
 package com.jw.lightwallet.screens;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -132,7 +135,7 @@ public class MainScreen extends AbstractScreen {
 		
 		screenlayout.add(logo).pad(10).center().row();
 
-		daemonview 		= new DaemonView();
+		daemonview 		= new DaemonView(game);
 		walletview 		= new WalletView(game);
 		transactionview	= new TransactionView();
 		historyview		= new HistoryView();
@@ -187,7 +190,7 @@ public class MainScreen extends AbstractScreen {
 		}, 1f, 10f);
 		
 		// Timer task to get output from simplewallet logging and check balances
-		wallettimer.scheduleTask(new Timer.Task() {
+		/*wallettimer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
 				String queuepoll = wq.poll();
@@ -201,9 +204,20 @@ public class MainScreen extends AbstractScreen {
 						String height = queuepoll.split("height ")[1].split(",")[0];
 						walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
 					}
+					else if (queuepoll != null && queuepoll.contains("money")) {
+						PrintWriter txout;
+						try {
+							txout = new PrintWriter(new BufferedWriter(new FileWriter(game.walletvalues.getName() + "tx.txt", true)));
+							txout.println(queuepoll);
+							txout.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}					
 				} catch (NullPointerException e){e.printStackTrace();}				
 			}
-		}, 1f, 0.05f);
+		}, 1f, 0.05f);*/
 		
 		// Timer task to get network info from daemon
 		balancetimer.scheduleTask(new Timer.Task() {
@@ -220,6 +234,31 @@ public class MainScreen extends AbstractScreen {
 
 		stage.draw();
 		stage.act(delta);
+		
+		// Poll wallet thread and check block height and if transaction data is in output
+		String queuepoll = wq.poll();
+		// Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
+		try{
+			if (queuepoll != null && queuepoll.contains("height:")) {
+				String height = queuepoll.split("height: ")[1].split(",")[0];
+				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
+			}
+			else if (queuepoll != null && queuepoll.contains("height ")) {
+				String height = queuepoll.split("height ")[1].split(",")[0];
+				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
+			}
+			else if (queuepoll != null && queuepoll.contains("money")) {
+				PrintWriter txout;
+				try {
+					txout = new PrintWriter(new BufferedWriter(new FileWriter(game.walletvalues.getName() + "tx.txt", true)));
+					txout.println(queuepoll);
+					txout.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}					
+		} catch (NullPointerException e){e.printStackTrace();}
 		
 	}
 	

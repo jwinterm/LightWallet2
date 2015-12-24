@@ -171,10 +171,11 @@ public class CreateScreen extends AbstractScreen {
 	    };
 	    Label success_label = new Label("Wallet successfully created. " + name + " file is your binary wallet file. "
 	    		+ name + ".keys is your keys file; "
-	    		+ "the keys file is password protected and you can restore your binary wallet file with it. " +
-	    		" A text file named " + name + "info.txt has also been created. This file contains your wallet recovery seed and view key. " +
-	    		"Please encrypt this file or print it and delete it. Your wallet seed allows wallet recovery and bypasses your password." +
-	    		"A file named lightwallet.conf has also been created; this file specifies the wallet and node currently in use.", uiSkin);
+	    		+ "the keys file is password protected and you can restore your binary wallet file with it. " 
+	    		+ " A text file named " + name + "info.txt has also been created. This file contains your wallet recovery seed and view key. "
+	    		+ "Please encrypt this file or print it and delete it. Your wallet seed allows wallet recovery and bypasses your password." 
+	    		+ "The text file " + name + "txs.txt is empty, but will contain your tx history after syncing the wallet and making txs. "
+	    		+ "A file named lightwallet.conf has also been created; this file specifies the wallet and node currently in use.", uiSkin);
 	    success_label.setWrap(true);
 	    success_dialog.add(success_label).width(400).row();
 	    success_dialog.button("Continue", true).addListener(new ClickListener() {
@@ -245,6 +246,10 @@ public class CreateScreen extends AbstractScreen {
 	            confwriter.println("Wallet view key: " + game.walletvalues.getViewkey());
 	            confwriter.println("Node address: " + nodetext.getText());
 	            confwriter.close();
+	            
+	            PrintWriter txwriter = new PrintWriter(name + "tx.txt", "UTF-8");
+	            txwriter.println("Transaction history: ");
+	            txwriter.close();
 	            
 	    	    success_dialog.show(stage);
 	        }

@@ -170,13 +170,7 @@ public class ImportKeysScreen extends AbstractScreen {
 	            System.out.println("result "+obj);
 	        }
 	    };
-	    Label successlabel = new Label("Wallet successfully imported. " + game.walletvalues.getName() + " file is your binary wallet file. "
-	    		+ game.walletvalues.getName() + ".keys is your keys file; "
-	    		+ "the keys file is password protected and you can restore your binary wallet file with it. "
-	    		+ " A text file named " + game.walletvalues.getName() + "info.txt has also been created. "
-	    		+ "This file contains your wallet recovery seed and view key. "
-	    		+ "Please encrypt this file or print it and delete it. Your wallet seed allows wallet recovery and bypasses your password."
-	    		+ "A file named lightwallet.conf has also been created; this file specifies the wallet and node currently in use.", uiSkin);
+	    Label successlabel = new Label("", uiSkin);
 	    successlabel.setWrap(true);
 	    successdialog.add(successlabel).width(400).row();
 	    successdialog.button("Continue", true).addListener(new ClickListener() {
@@ -230,7 +224,7 @@ public class ImportKeysScreen extends AbstractScreen {
 
 	    
         try {
-            Process tr = Runtime.getRuntime().exec("simplewallet --wallet-file " + name + " --password " + pw);
+            Process tr = Runtime.getRuntime().exec("simplewallet --wallet-file " + name + " --password " + pw + " --daemon-address http://localhost:66666");
             Writer wr = new OutputStreamWriter( tr.getOutputStream() );
             BufferedReader rd = new BufferedReader( new InputStreamReader( tr.getInputStream() ) );
             
@@ -284,6 +278,18 @@ public class ImportKeysScreen extends AbstractScreen {
             confwriter.println("Node address: " + nodetext.getText());
             confwriter.close();
             
+            PrintWriter txwriter = new PrintWriter(name + "tx.txt", "UTF-8");
+            txwriter.println("Transaction history: ");
+            txwriter.close();
+            
+            successlabel.setText("Wallet successfully imported. " + game.walletvalues.getName() + " file is your binary wallet file. "
+	    		+ game.walletvalues.getName() + ".keys is your keys file; "
+	    		+ "the keys file is password protected and you can restore your binary wallet file with it. "
+	    		+ " A text file named " + game.walletvalues.getName() + "info.txt has also been created. "
+	    		+ "This file contains your wallet recovery seed and view key. "
+	    		+ "Please encrypt this file or print it and delete it. Your wallet seed allows wallet recovery and bypasses your password."
+	    		+ "The text file " + game.walletvalues.getName() + "txs.txt is empty, but will contain your tx history after syncing the wallet. "
+	    		+ "A file named lightwallet.conf has also been created; this file specifies the wallet and node currently in use.");
     	    successdialog.show(stage);
         }
         

@@ -34,24 +34,24 @@ public class TransactionView {
 		padvalue		= 15;
 
 		addresslabel 	= new Label("Send to address: ", uiSkin);
-		addressvalue	= new TextField("", uiSkin);
-		txlayout.add(addresslabel).pad(padvalue).width(150);
-		txlayout.add(addressvalue).pad(padvalue).width(650).row();
+		addressvalue	= new TextField("", uiSkin, "tinytext");
+		txlayout.add(addresslabel).pad(padvalue).width(100);
+		txlayout.add(addressvalue).pad(padvalue).width(600).row();
 		
 		amountlabel 	= new Label("Send amount XMR: ", uiSkin);
 		amountvalue		= new TextField("", uiSkin);
-		txlayout.add(amountlabel).pad(padvalue).width(150);
-		txlayout.add(amountvalue).pad(padvalue).width(650).row();
+		txlayout.add(amountlabel).pad(padvalue).width(100);
+		txlayout.add(amountvalue).pad(padvalue).width(100).row();
 		
 		mixinlabel 		= new Label("Mixin level: ", uiSkin);
 		mixinvalue		= new TextField("", uiSkin);
-		txlayout.add(mixinlabel).pad(padvalue).width(150);
-		txlayout.add(mixinvalue).pad(padvalue).width(650).row();
+		txlayout.add(mixinlabel).pad(padvalue).width(100);
+		txlayout.add(mixinvalue).pad(padvalue).width(50).row();
 		
 		idlabel 		= new Label("Payment id: ", uiSkin);
-		idvalue			= new TextField("", uiSkin);
-		txlayout.add(idlabel).pad(padvalue).width(150);
-		txlayout.add(idvalue).pad(padvalue).width(650).row();
+		idvalue			= new TextField("", uiSkin, "tinytext");
+		txlayout.add(idlabel).pad(padvalue).width(100);
+		txlayout.add(idvalue).pad(padvalue).width(600).row();
 		
 		sendbtn			= new TextButton("Payola!", uiSkin);
 		txlayout.add(sendbtn).row();
