@@ -23,7 +23,9 @@ import com.jw.lightwallet.daemon.DaemonRPC;
 import com.jw.lightwallet.utils.BalanceValues;
 import com.jw.lightwallet.utils.Constants;
 import com.jw.lightwallet.utils.DaemonValues;
+import com.jw.lightwallet.utils.WalletSaveValues;
 import com.jw.lightwallet.wallet.BalanceRPC;
+import com.jw.lightwallet.wallet.WalletSaveRPC;
 
 
 public class MainScreen extends AbstractScreen {
@@ -33,6 +35,9 @@ public class MainScreen extends AbstractScreen {
 	
 	BalanceRPC			balancerpc;
 	BalanceValues		balancevalues;
+	
+	WalletSaveRPC		walletsaverpc;
+	WalletSaveValues	walletsavevalues;
 	
 	// Layout stuff
 	Stage				stage;
@@ -55,7 +60,7 @@ public class MainScreen extends AbstractScreen {
 
 	// Timers
 	Timer				daemontimer;
-	Timer				wallettimer;
+	Timer				walletsavetimer;
 	Timer				balancetimer;
 	
 	// Wallet thread and queue stuff
@@ -68,8 +73,8 @@ public class MainScreen extends AbstractScreen {
 		super(game);
 		
 		daemontimer 	= new Timer();
-		wallettimer		= new Timer();
-		wq 				= new AtomicQueue<String>(100);
+		walletsavetimer	= new Timer();
+		wq 				= new AtomicQueue<String>(1000);
 		balancetimer	= new Timer();
 						
 		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
@@ -79,6 +84,9 @@ public class MainScreen extends AbstractScreen {
 		
 		balancerpc		= new BalanceRPC();
 		balancevalues	= new BalanceValues();
+		
+		walletsaverpc	= new WalletSaveRPC();
+		walletsavevalues= new WalletSaveValues();
 
 		stage 			= new Stage();
 		Gdx.input.setInputProcessor(stage);
@@ -94,8 +102,7 @@ public class MainScreen extends AbstractScreen {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
 	            System.out.println("Daemon button Pressed");
-	            viewcontainer.removeActor(walletview.walletlayout);
-	            viewcontainer.removeActor(transactionview.txlayout);
+	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
 	            viewcontainer.add(daemonview.daemonlayout).expand().bottom();
 	        }
 	    });
@@ -104,8 +111,7 @@ public class MainScreen extends AbstractScreen {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
 	            System.out.println("Wallet button Pressed");
-	            viewcontainer.removeActor(daemonview.daemonlayout);
-	            viewcontainer.removeActor(transactionview.txlayout);
+	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
 	            viewcontainer.add(walletview.walletlayout).expand().bottom();
 	        }
 	    });		
@@ -114,8 +120,7 @@ public class MainScreen extends AbstractScreen {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
 	            System.out.println("Transfer button Pressed");
-	            viewcontainer.removeActor(daemonview.daemonlayout);
-	            viewcontainer.removeActor(walletview.walletlayout);
+	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
 	            viewcontainer.add(transactionview.txlayout).expand().bottom();
 	        }
 	    });		
@@ -124,6 +129,8 @@ public class MainScreen extends AbstractScreen {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
 	            System.out.println("History button Pressed");
+	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
+	            viewcontainer.add(transactionview.txlayout).expand().bottom();
 	        }
 	    });		
 		
@@ -189,37 +196,7 @@ public class MainScreen extends AbstractScreen {
 			}
 		}, 1f, 10f);
 		
-		// Timer task to get output from simplewallet logging and check balances
-		/*wallettimer.scheduleTask(new Timer.Task() {
-			@Override
-			public void run() {
-				String queuepoll = wq.poll();
-				Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
-				try{
-					if (queuepoll != null && queuepoll.contains("height:")) {
-						String height = queuepoll.split("height: ")[1].split(",")[0];
-						walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
-					}
-					else if (queuepoll != null && queuepoll.contains("height ")) {
-						String height = queuepoll.split("height ")[1].split(",")[0];
-						walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
-					}
-					else if (queuepoll != null && queuepoll.contains("money")) {
-						PrintWriter txout;
-						try {
-							txout = new PrintWriter(new BufferedWriter(new FileWriter(game.walletvalues.getName() + "tx.txt", true)));
-							txout.println(queuepoll);
-							txout.close();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}					
-				} catch (NullPointerException e){e.printStackTrace();}				
-			}
-		}, 1f, 0.05f);*/
-		
-		// Timer task to get network info from daemon
+		// Timer task to check balance from simplewallet
 		balancetimer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
@@ -227,7 +204,16 @@ public class MainScreen extends AbstractScreen {
 			}
 		}, 1f, 5f);
 		
+		// Timer task to try and save wallet every minute
+		walletsavetimer.scheduleTask(new Timer.Task() {
+			@Override
+			public void run() {
+				walletsaverpc.trysave(walletsavevalues);
+			}
+		}, 60f, 60f);
+		
 	}
+	
 	
 	public void render(float delta) {
 		super.render(delta);
@@ -259,23 +245,20 @@ public class MainScreen extends AbstractScreen {
 				}
 			}					
 		} catch (NullPointerException e){e.printStackTrace();}
-		
 	}
+	
 	
 	public void dispose() {
 		super.dispose();
-		
 	}
 
+	
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
 		super.hide();
 		wp.destroy();
-		
 	}
-	
-	
 	
 
 }

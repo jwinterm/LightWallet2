@@ -22,7 +22,9 @@ public class WalletView {
 	Label		unlockedlabel;
 	Label		unlockedvalue;
 	Label		lockedlabel;
-	Label		lockedvalue;		
+	Label		lockedvalue;	
+	TextButton	savewalletbtn;
+	Label		savewalletlabel;
 	
 	int 		padvalue;
 
@@ -32,7 +34,7 @@ public class WalletView {
 		Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
 		walletlayout 		= new Table();
-		padvalue			= 15;
+		padvalue			= 16;
 
 		namelabel 			= new Label("Name: ", uiSkin);
 		namevalue			= new Label(game.walletvalues.getName(), uiSkin);
@@ -59,6 +61,11 @@ public class WalletView {
 		lockedvalue			= new Label("Loading...", uiSkin, "redlabel");
 		walletlayout.add(lockedlabel).pad(padvalue);
 		walletlayout.add(lockedvalue).pad(padvalue).row();
+		
+		savewalletbtn		= new TextButton("Save wallet\n(will attempt autosave every 60 s)", uiSkin);
+		savewalletlabel		= new Label("Not saved :(", uiSkin, "redlabel");
+		walletlayout.add(savewalletbtn);
+		walletlayout.add(savewalletlabel);
 		
 		addresslabel.addListener(new ClickListener() {
 	        @Override
