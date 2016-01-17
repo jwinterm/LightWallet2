@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -59,23 +60,22 @@ public class MainScreen extends AbstractScreen {
 	HistoryView			historyview;
 
 	// Timers
-	Timer				daemontimer;
-	Timer				walletsavetimer;
-	Timer				balancetimer;
+	boolean				fivesectimer;
+	boolean				tensectimer;
+	boolean				sixtysectimer;
 	
 	// Wallet thread and queue stuff
 	Process				wp;
 	BufferedReader		wr;
 	AtomicQueue<String>	wq;
+	ArrayList<String>	txlist;
 	
 
 	public MainScreen(final LightWallet game) {
 		super(game);
-		
-		daemontimer 	= new Timer();
-		walletsavetimer	= new Timer();
+
 		wq 				= new AtomicQueue<String>(1000);
-		balancetimer	= new Timer();
+		txlist			= new ArrayList<String>();
 						
 		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
@@ -155,7 +155,69 @@ public class MainScreen extends AbstractScreen {
 	
 	public void show() {
 		super.show();
+		launchsimplewallet();
+	}
+	
+	
+	public void render(float delta) {
+		super.render(delta);
+
+		stage.draw();
+		stage.act(delta);
 		
+		updatetimers(delta);
+		runtasks();
+		update();
+
+	}
+	
+	
+	public void dispose() {
+		super.dispose();
+	}
+
+	
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		super.hide();
+		wp.destroy();
+	}
+	
+	public void updatetimers(float delta) {
+		if (accum5s > 5) { fivesectimer = true; }
+		if (accum10s > 10) { tensectimer = true; }
+		if (accum60s > 60) { sixtysectimer = true; }
+	}
+	
+	public void runtasks() {
+		if (fivesectimer == true) {
+			// Timer task to check balance from simplewallet
+			balancerpc.getinfo(balancevalues);
+			fivesectimer = false;
+			accum5s = 0;
+		}
+		if (tensectimer == true) {
+			// Timer task to get network info from daemon
+			daemonrpc.getinfo(daemonvalues);
+			daemonview.Update(daemonvalues);
+			tensectimer = false;
+			accum10s = 0;
+		}
+		if (sixtysectimer == true) {
+			// Timer task to try and save wallet every minute
+			walletsaverpc.trysave(walletsavevalues);
+			dumptx();
+			sixtysectimer = false;
+			accum60s = 0;
+		}
+	}
+	
+	public void update() {
+		
+	}
+	
+	public void launchsimplewallet() {
 		new Thread(new Runnable() {
 			   @Override
 			   public void run() {
@@ -186,41 +248,9 @@ public class MainScreen extends AbstractScreen {
 			      });
 			   }
 			}).start();
-		
-		// Timer task to get network info from daemon
-		daemontimer.scheduleTask(new Timer.Task() {
-			@Override
-			public void run() {
-				daemonrpc.getinfo(daemonvalues);
-				daemonview.Update(daemonvalues);
-			}
-		}, 1f, 10f);
-		
-		// Timer task to check balance from simplewallet
-		balancetimer.scheduleTask(new Timer.Task() {
-			@Override
-			public void run() {
-				balancerpc.getinfo(balancevalues);
-			}
-		}, 1f, 5f);
-		
-		// Timer task to try and save wallet every minute
-		walletsavetimer.scheduleTask(new Timer.Task() {
-			@Override
-			public void run() {
-				walletsaverpc.trysave(walletsavevalues);
-			}
-		}, 60f, 60f);
-		
 	}
 	
-	
-	public void render(float delta) {
-		super.render(delta);
-
-		stage.draw();
-		stage.act(delta);
-		
+	public void readwalletqueue () {
 		// Poll wallet thread and check block height and if transaction data is in output
 		String queuepoll = wq.poll();
 		// Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
@@ -235,6 +265,7 @@ public class MainScreen extends AbstractScreen {
 			}
 			else if (queuepoll != null && queuepoll.contains("money")) {
 				PrintWriter txout;
+				txlist.add(queuepoll);
 				try {
 					txout = new PrintWriter(new BufferedWriter(new FileWriter(game.walletvalues.getName() + "tx.txt", true)));
 					txout.println(queuepoll);
@@ -247,18 +278,8 @@ public class MainScreen extends AbstractScreen {
 		} catch (NullPointerException e){e.printStackTrace();}
 	}
 	
-	
-	public void dispose() {
-		super.dispose();
-	}
-
-	
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		super.hide();
-		wp.destroy();
+	public void dumptx() {
+		
 	}
 	
-
 }

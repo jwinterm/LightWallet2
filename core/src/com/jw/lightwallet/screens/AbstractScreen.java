@@ -12,15 +12,19 @@ public class AbstractScreen implements Screen {
 	protected int 		w;
 	protected int	 	h;
 	protected float 	aspect;
-	protected float		accumulator;
+	protected float		accum5s;
+	protected float		accum10s;
+	protected float		accum60s;
 	
 	public AbstractScreen (final LightWallet game) {
-		this.game = game;
-		this.font = new BitmapFont(Gdx.files.internal("fonts/bauchaomaicha.fnt"));
-		this.w = Gdx.graphics.getWidth();
-		this.h = Gdx.graphics.getHeight();
-		this.aspect = w/h;
-		this.accumulator = 0;
+		this.game 		= game;
+		this.font		= new BitmapFont(Gdx.files.internal("fonts/bauchaomaicha.fnt"));
+		this.w 			= Gdx.graphics.getWidth();
+		this.h 			= Gdx.graphics.getHeight();
+		this.aspect 	= w/h;
+		this.accum5s 	= 0;
+		this.accum10s 	= 0;
+		this.accum60s 	= 0;
 	}
 
 	@Override
@@ -33,7 +37,9 @@ public class AbstractScreen implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);	
-		accumulator = accumulator + delta;
+		accum5s = accum5s + delta;
+		accum10s = accum10s + delta;
+		accum60s = accum60s + delta;
 	}
 
 	@Override
