@@ -24,6 +24,7 @@ import com.jw.lightwallet.daemon.DaemonRPC;
 import com.jw.lightwallet.utils.BalanceValues;
 import com.jw.lightwallet.utils.Constants;
 import com.jw.lightwallet.utils.DaemonValues;
+import com.jw.lightwallet.utils.Tx;
 import com.jw.lightwallet.utils.WalletSaveValues;
 import com.jw.lightwallet.wallet.BalanceRPC;
 import com.jw.lightwallet.wallet.WalletSaveRPC;
@@ -31,51 +32,51 @@ import com.jw.lightwallet.wallet.WalletSaveRPC;
 
 public class MainScreen extends AbstractScreen {
 	// Interface classes
-	DaemonRPC			daemonrpc;
-	DaemonValues		daemonvalues;
+	DaemonRPC				daemonrpc;
+	DaemonValues			daemonvalues;
 	
-	BalanceRPC			balancerpc;
-	BalanceValues		balancevalues;
+	BalanceRPC				balancerpc;
+	BalanceValues			balancevalues;
 	
-	WalletSaveRPC		walletsaverpc;
-	WalletSaveValues	walletsavevalues;
+	WalletSaveRPC			walletsaverpc;
+	WalletSaveValues		walletsavevalues;
 	
 	// Layout stuff
-	Stage				stage;
-	Table				screenlayout;
+	Stage					stage;
+	Table					screenlayout;
 	
-	Image				logo;
-	Texture				logotex;
+	Image					logo;
+	Texture					logotex;
 	
-	Table				buttonrow;
-	TextButton			daemonbutton;
-	TextButton			walletbutton;
-	TextButton			transferbutton;
-	TextButton			txhistorybutton;
+	Table					buttonrow;
+	TextButton				daemonbutton;
+	TextButton				walletbutton;
+	TextButton				transferbutton;
+	TextButton				txhistorybutton;
 	
-	Table				viewcontainer;
-	DaemonView			daemonview;
-	WalletView			walletview;
-	TransactionView		transactionview;
-	HistoryView			historyview;
+	Table					viewcontainer;
+	DaemonView				daemonview;
+	WalletView				walletview;
+	TransactionView			transactionview;
+	HistoryView				historyview;
 
 	// Timers
-	boolean				fivesectimer;
-	boolean				tensectimer;
-	boolean				sixtysectimer;
+	boolean					fivesectimer;
+	boolean					tensectimer;
+	boolean					sixtysectimer;
 	
 	// Wallet thread and queue stuff
-	Process				wp;
-	BufferedReader		wr;
-	AtomicQueue<String>	wq;
-	ArrayList<String>	txlist;
+	Process					wp;
+	BufferedReader			wr;
+	AtomicQueue<String>		wq;
+	ArrayList<Tx>			txlist;
 	
 
 	public MainScreen(final LightWallet game) {
 		super(game);
 
 		wq 				= new AtomicQueue<String>(1000);
-		txlist			= new ArrayList<String>();
+		txlist			= new ArrayList<Tx>();
 						
 		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
@@ -191,6 +192,8 @@ public class MainScreen extends AbstractScreen {
 	}
 	
 	public void runtasks() {
+		// Read simplewallet queue to check for transactions
+		readwalletqueue();
 		if (fivesectimer == true) {
 			// Timer task to check balance from simplewallet
 			balancerpc.getinfo(balancevalues);
@@ -207,7 +210,7 @@ public class MainScreen extends AbstractScreen {
 		if (sixtysectimer == true) {
 			// Timer task to try and save wallet every minute
 			walletsaverpc.trysave(walletsavevalues);
-			dumptx();
+			dumptxlist();
 			sixtysectimer = false;
 			accum60s = 0;
 		}
@@ -264,21 +267,48 @@ public class MainScreen extends AbstractScreen {
 				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
 			}
 			else if (queuepoll != null && queuepoll.contains("money")) {
-				PrintWriter txout;
-				txlist.add(queuepoll);
-				try {
-					txout = new PrintWriter(new BufferedWriter(new FileWriter(game.walletvalues.getName() + "tx.txt", true)));
-					txout.println(queuepoll);
-					txout.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				txlist.add(Tx.StringToTx(queuepoll));
 			}					
 		} catch (NullPointerException e){e.printStackTrace();}
 	}
 	
-	public void dumptx() {
+
+	public void dumptxlist() {
+		boolean newtx = true;  // this is a flag to reset whenever txid or type changes
+		Tx temptx = new Tx();
+		// Cycle through list of transactions from queue in last 60 s
+		if (txlist.size() > 0) {
+			for (int i = 0; i <= txlist.size(); i++) {
+				// If newtx flag then create a new temporary tx
+				if (newtx == true) { 
+					temptx = new Tx();
+					temptx.type = txlist.get(i).type;
+					temptx.amount = txlist.get(i).amount;
+					temptx.txid = txlist.get(i).txid;
+				}
+				// If newtx flag is false then append amount to temp tx
+				else if (newtx = false) {
+					temptx.amount += txlist.get(i).amount;
+				}
+				
+				// If the next tx is different or at the end of list, write current one to file and set flag
+				if ((i < txlist.size()-1 && 
+						(txlist.get(i).txid != txlist.get(i+1).txid || txlist.get(i).type != txlist.get(i+1).type)) 
+						|| i == txlist.size()-1) {
+					PrintWriter txout;
+					try {
+						txout = new PrintWriter(new BufferedWriter(new FileWriter(game.walletvalues.getName() + "tx.txt", true)));
+						txout.println(temptx.type + " | " + temptx.amount + " | " + temptx.txid);
+						txout.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					newtx = true;					
+				}
+				
+			}
+		}
 		
 	}
 	
