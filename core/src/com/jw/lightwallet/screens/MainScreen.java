@@ -10,15 +10,20 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.AtomicQueue;
 import com.jw.lightwallet.LightWallet;
 import com.jw.lightwallet.daemon.DaemonRPC;
@@ -91,7 +96,7 @@ public class MainScreen extends AbstractScreen {
 		balancerpc		= new BalanceRPC();
 		balancevalues	= new BalanceValues();
 		
-		walletsaverpc	= new WalletSaveRPC();
+		walletsaverpc	= new WalletSaveRPC(game);
 		walletsavevalues= new WalletSaveValues();
 
 		stage 			= new Stage();
@@ -146,16 +151,19 @@ public class MainScreen extends AbstractScreen {
 		buttonrow.add(txhistorybutton).width(Constants.WORLD_WIDTH/4);
 		screenlayout.add(buttonrow).top().row();
 		
-		screenlayout.add(logo).pad(10).center().row();
+		screenlayout.add(logo).pad(5).center().row();
 
 		daemonview 		= new DaemonView(game);
-		walletview 		= new WalletView(game);
+		walletview 		= new WalletView(game, walletsaverpc);
 		transactionview	= new TransactionView();
 		historyview		= new HistoryView();
-		viewcontainer.add(daemonview.daemonlayout).expand().bottom();
+		viewcontainer.add(daemonview.daemonlayout).expand().fill();
 		screenlayout.add(viewcontainer);
 		
+		// viewcontainer.setFillParent(true);
 		screenlayout.setFillParent(true);
+		screenlayout.top();
+		// screenlayout.setDebug(true);
 		stage.addActor(screenlayout);
 	}
 	
@@ -214,7 +222,7 @@ public class MainScreen extends AbstractScreen {
 		}
 		if (sixtysectimer == true) {
 			// Timer task to try and save wallet every minute
-			walletsaverpc.trysave(walletsavevalues);
+			walletsaverpc.trysave(walletview.getSavewalletlabel());
 			dumptxlist();
 			sixtysectimer = false;
 			accum60s = 0;
@@ -225,11 +233,12 @@ public class MainScreen extends AbstractScreen {
 		
 	}
 	
+	// Launch simplewallet in its own thread
 	public void launchsimplewallet() {
 		new Thread(new Runnable() {
 			   @Override
 			   public void run() {
-			      // do something important here, asynchronously to the rendering thread
+				   // Setup simplewallet command with the specified file, password, and node address
 				   try {
 					Gdx.app.log(LightWallet.LOG, "Command is: " + "simplewallet --wallet-file " + game.walletvalues.getName() 
 							   + " --password " + game.walletvalues.getPw() + " --daemon-address " + game.walletvalues.getNode()
@@ -240,6 +249,7 @@ public class MainScreen extends AbstractScreen {
 					wr = new BufferedReader(new InputStreamReader(wp.getInputStream()));
 					while (true) {
 						String str = wr.readLine();
+						// Gdx.app.log(LightWallet.LOG, str);
 						wq.put(str);
 					}
 					} catch (IOException e) {
@@ -263,19 +273,50 @@ public class MainScreen extends AbstractScreen {
 		String queuepoll = wq.poll();
 		// Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
 		try{
+			// If the string contains "height" then update the daemon and wallet screen blockheight
 			if (queuepoll != null && queuepoll.contains("height:")) {
 				String height = queuepoll.split("height: ")[1].split(",")[0];
+				Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
 				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
+				if (height.equals(Integer.toString(daemonvalues.getBlockheight()))) {
+					walletview.syncvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
+				} else {walletview.syncvalue.setStyle(game.uiSkin.get("default", LabelStyle.class));}
 			}
 			else if (queuepoll != null && queuepoll.contains("height ")) {
 				String height = queuepoll.split("height ")[1].split(",")[0];
+				Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
 				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
+				if (height.equals(Integer.toString(daemonvalues.getBlockheight()))) {
+					walletview.syncvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
+				} else {walletview.syncvalue.setStyle(game.uiSkin.get("default", LabelStyle.class));}
 			}
+			// If the string contains "money" then create a tx and add it to the txlist
 			else if (queuepoll != null && queuepoll.contains("money")) {
 				txlist.add(Tx.StringToTx(queuepoll));
 				// Gdx.app.log(LightWallet.LOG, "Found tx: " + txlist.get(txlist.size()-1).txid + 
 				// 		" of type " + txlist.get(txlist.size()-1).type + " and amount " + txlist.get(txlist.size()-1).amount);
-			}					
+			}
+			// If the string contains "invalid password" then show popup and return to password screen
+			else if (queuepoll != null && queuepoll.contains("invalid password")) {
+				wp.destroy();
+			    Dialog failuredialog = new Dialog("Password incorrect!", game.uiSkin, "dialog") {
+			        public void result(Object obj) {
+			            System.out.println("result "+obj);
+			        }
+			    };
+			    Label failurelabel = new Label("Simplewallet reports you entered an invalid password, click to try again.", game.uiSkin);
+			    failurelabel.setWrap(true);
+			    failuredialog.add(failurelabel).width(400).row();
+			    failuredialog.button("Continue", true).addListener(new ClickListener() {
+			        @Override
+			        public void clicked (InputEvent event, float x, float y) {
+			            game.setScreen(new PasswordScreen(game));
+			            stage.dispose();
+			        }
+			    });
+			    failuredialog.key(Keys.ENTER, true); //sends "true" when the ENTER key is pressed
+			    failuredialog.show(stage);
+			}
 		} catch (NullPointerException e){e.printStackTrace();}
 	}
 	

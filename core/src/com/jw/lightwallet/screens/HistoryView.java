@@ -29,7 +29,7 @@ public class HistoryView {
 		
 		historylayout.add(new Label("Transaction history (click to copy txid)", uiSkin)).row();
 		historylayout.add(new Label("Type | Amount | Transaction ID", uiSkin)).row();
-		historylayout.add(scroller).fill().expand();
+		historylayout.add(scroller).fill();
 
 		
 	}

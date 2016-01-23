@@ -30,7 +30,6 @@ public class ImportKeysScreen extends AbstractScreen {
 
 	Stage				stage;
 	Table				screenlayout;
-	Skin				uiSkin;
 	int 				padvalue;
 	
 	Image				logo;
@@ -58,7 +57,6 @@ public class ImportKeysScreen extends AbstractScreen {
 	public ImportKeysScreen(final LightWallet game) {
 		super(game);
 		
-		uiSkin 			= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		padvalue = 20;
 		
 		stage 			= new Stage();
@@ -75,23 +73,23 @@ public class ImportKeysScreen extends AbstractScreen {
 				+ "The wallet keys file will be copied to the local directory and a new binary file will be created. "
 				+ "The default bitmonerod node is set for moneroclub, if you want to run a local daemon change the node field to http://localhost:18081.";
 		
-		instructionlabel= new Label(instruction, uiSkin);
+		instructionlabel= new Label(instruction, game.uiSkin);
 		instructionlabel.setWrap(true);
 		textcontainer 	= new Table();
 		textcontainer.add(instructionlabel).width(600);
 		
 		inputtable		= new Table();
 		
-		pathlabel		= new Label("Wallet path: ", uiSkin);
-		pathtext		= new TextField("", uiSkin);
+		pathlabel		= new Label("Wallet path: ", game.uiSkin);
+		pathtext		= new TextField("", game.uiSkin);
 		
-		pwlabel			= new Label("Password: ", uiSkin);
-		pwtext			= new TextField("", uiSkin);
+		pwlabel			= new Label("Password: ", game.uiSkin);
+		pwtext			= new TextField("", game.uiSkin);
 		pwtext.setPasswordMode(true);
 		pwtext.setPasswordCharacter((char) 42);
 
-		nodelabel		= new Label("Node address: ", uiSkin);
-		nodetext		= new TextField(Constants.moneroclubdmn, uiSkin);
+		nodelabel		= new Label("Node address: ", game.uiSkin);
+		nodetext		= new TextField(Constants.moneroclubdmn, game.uiSkin);
 		
 		inputtable.add(pathlabel).width(200);
 		inputtable.add(pathtext).width(400).row();
@@ -102,7 +100,7 @@ public class ImportKeysScreen extends AbstractScreen {
 		
 		buttontable		= new Table();
 		
-		importbutton	= new TextButton("Import!", uiSkin);
+		importbutton	= new TextButton("Import!", game.uiSkin);
 		importbutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
@@ -113,7 +111,7 @@ public class ImportKeysScreen extends AbstractScreen {
 	        }
 	    });	
 		
-		gobackbutton	= new TextButton("Cancel", uiSkin);
+		gobackbutton	= new TextButton("Cancel", game.uiSkin);
 		gobackbutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
@@ -165,37 +163,35 @@ public class ImportKeysScreen extends AbstractScreen {
 	    
 	    
 	    // Create success and failure dialogs to show based on outcome
-	    Dialog successdialog = new Dialog("Success!", uiSkin, "dialog") {
+	    Dialog successdialog = new Dialog("Success!", game.uiSkin, "dialog") {
 	        public void result(Object obj) {
 	            System.out.println("result "+obj);
 	        }
 	    };
-	    Label successlabel = new Label("", uiSkin);
+	    Label successlabel = new Label("", game.uiSkin);
 	    successlabel.setWrap(true);
 	    successdialog.add(successlabel).width(400).row();
 	    successdialog.button("Continue", true).addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
 	            game.setScreen(new MainScreen(game));
-	            uiSkin.dispose();
 	            stage.dispose();
 	        }
 	    });
 	    successdialog.key(Keys.ENTER, true); //sends "true" when the ENTER key is pressed
 
-	    Dialog failuredialog = new Dialog("Utter failure!", uiSkin, "dialog") {
+	    Dialog failuredialog = new Dialog("Utter failure!", game.uiSkin, "dialog") {
 	        public void result(Object obj) {
 	            System.out.println("result "+obj);
 	        }
 	    };
-	    Label failurelabel = new Label("Wallet import failed. Click to start over.", uiSkin);
+	    Label failurelabel = new Label("Wallet import failed. Click to start over.", game.uiSkin);
 	    failurelabel.setWrap(true);
 	    failuredialog.add(failurelabel).width(400).row();
 	    failuredialog.button("Continue", true).addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
 	            game.setScreen(new WizardScreen(game));
-	            uiSkin.dispose();
 	            stage.dispose();
 	        }
 	    });

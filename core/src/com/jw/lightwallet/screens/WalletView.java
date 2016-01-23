@@ -8,28 +8,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.jw.lightwallet.LightWallet;
+import com.jw.lightwallet.wallet.WalletSaveRPC;
 
 public class WalletView {
+	LightWallet 	game;
+	WalletSaveRPC 	walletsaverpc;
 
-	Table		walletlayout;
+	Table			walletlayout;
 	
-	Label		namelabel;
-	Label		namevalue;	
-	TextButton	addresslabel;
-	Label		addressvalue;
-	Label		synclabel;
-	Label		syncvalue;
-	Label		unlockedlabel;
-	Label		unlockedvalue;
-	Label		lockedlabel;
-	Label		lockedvalue;	
-	TextButton	savewalletbtn;
-	Label		savewalletlabel;
+	Label			namelabel;
+	Label			namevalue;	
+	TextButton		addresslabel;
+	Label			addressvalue;
+	Label			synclabel;
+	Label			syncvalue;
+	Label			unlockedlabel;
+	Label			unlockedvalue;
+	Label			lockedlabel;
+	Label			lockedvalue;	
+	TextButton		savewalletbtn;
+	Label			savewalletlabel;
 	
-	int 		padvalue;
+	int 			padvalue;
 
 
-	public WalletView (final LightWallet game) {
+	public WalletView (final LightWallet game, final WalletSaveRPC walletsaverpc) {
+		this.game			= game;
+		this.walletsaverpc 	= walletsaverpc;
 				
 		walletlayout 		= new Table();
 		padvalue			= 16;
@@ -63,7 +68,16 @@ public class WalletView {
 		savewalletbtn		= new TextButton("Save wallet\n(will attempt autosave every 60 s)", game.uiSkin);
 		savewalletlabel		= new Label("Not saved :(", game.uiSkin, "redlabel");
 		walletlayout.add(savewalletbtn);
-		walletlayout.add(savewalletlabel).fill().expand();
+		walletlayout.add(savewalletlabel);
+		
+		walletlayout.add(new Label("", game.uiSkin)).fill().expand();
+
+		savewalletbtn.addListener(new ClickListener() {
+	        @Override
+	        public void clicked (InputEvent event, float x, float y) {
+	        	walletsaverpc.trysave(savewalletlabel);
+	        }
+	    });	
 		
 		addresslabel.addListener(new ClickListener() {
 	        @Override
@@ -72,5 +86,15 @@ public class WalletView {
 	        }
 	    });	
 		
+	}
+
+
+	public Label getSavewalletlabel() {
+		return savewalletlabel;
+	}
+
+
+	public void setSavewalletlabel(Label savewalletlabel) {
+		this.savewalletlabel = savewalletlabel;
 	}
 }

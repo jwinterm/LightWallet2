@@ -74,7 +74,7 @@ public class DaemonView {
 	daemonlayout.add(rewardlabel).pad(padvalue);
 	daemonlayout.add(rewardvalue).pad(padvalue).row();
 	
-	daemonlayout.add(new Label("", uiSkin)).fill().expand();
+	daemonlayout.add(new Label("", uiSkin));
 	}
 	
 	public void Update(DaemonValues daemonvalues) {
