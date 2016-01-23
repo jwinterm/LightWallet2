@@ -2,6 +2,7 @@ package com.jw.lightwallet.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.jw.lightwallet.LightWallet;
@@ -12,6 +13,8 @@ import java.text.DecimalFormat;
 public class DaemonView {
 	
 	LightWallet game;
+	
+	Skin 		uiSkin;
 	
 	Table		daemonlayout;
 	
@@ -35,7 +38,7 @@ public class DaemonView {
 	
 	this.game		= game;
 		
-	Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
+	uiSkin 			= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
 	daemonlayout 	= new Table();
 	padvalue		= 15;
@@ -70,11 +73,15 @@ public class DaemonView {
 	rewardvalue		= new Label(null, uiSkin);
 	daemonlayout.add(rewardlabel).pad(padvalue);
 	daemonlayout.add(rewardvalue).pad(padvalue).row();
+	
+	daemonlayout.add(new Label("", uiSkin)).fill().expand();
 	}
 	
 	public void Update(DaemonValues daemonvalues) {
 		nodevalue.setText(game.walletvalues.getNode());
 		statusvalue.setText(daemonvalues.getStatus());
+		Gdx.app.log(LightWallet.LOG, "Status value is: " + statusvalue.getText());
+		if (statusvalue.getText().toString().equals("OK")) {statusvalue.setStyle(uiSkin.get("greenlabel", LabelStyle.class));}
 		heightvalue.setText(String.valueOf(daemonvalues.getBlockheight()));
 		hashratevalue.setText(new DecimalFormat("##.##").format(daemonvalues.getHashrate()) + " Mh/s");
 		timevalue.setText(String.valueOf(new java.util.Date(daemonvalues.getLastblocktime()*1000)));

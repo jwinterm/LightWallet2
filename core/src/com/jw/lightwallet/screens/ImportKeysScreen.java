@@ -279,7 +279,7 @@ public class ImportKeysScreen extends AbstractScreen {
             confwriter.close();
             
             PrintWriter txwriter = new PrintWriter(name + "tx.txt", "UTF-8");
-            txwriter.println("Transaction history: ");
+            txwriter.println("Transaction history (Type | Amount | Tx ID): ");
             txwriter.close();
             
             successlabel.setText("Wallet successfully imported. " + game.walletvalues.getName() + " file is your binary wallet file. "

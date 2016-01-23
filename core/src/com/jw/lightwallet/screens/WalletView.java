@@ -30,42 +30,40 @@ public class WalletView {
 
 
 	public WalletView (final LightWallet game) {
-		
-		Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-		
+				
 		walletlayout 		= new Table();
 		padvalue			= 16;
 
-		namelabel 			= new Label("Name: ", uiSkin);
-		namevalue			= new Label(game.walletvalues.getName(), uiSkin);
+		namelabel 			= new Label("Name: ", game.uiSkin);
+		namevalue			= new Label(game.walletvalues.getName(), game.uiSkin);
 		walletlayout.add(namelabel).pad(padvalue);
 		walletlayout.add(namevalue).pad(padvalue).row();
 		
-		addresslabel 		= new TextButton("Address (click to copy): ", uiSkin);
-		addressvalue		= new Label(game.walletvalues.getAddress(), uiSkin);
+		addresslabel 		= new TextButton("Address (click to copy): ", game.uiSkin);
+		addressvalue		= new Label(game.walletvalues.getAddress(), game.uiSkin);
 		addressvalue.setFontScale(0.6f, 0.6f);
 		walletlayout.add(addresslabel).pad(padvalue);
 		walletlayout.add(addressvalue).pad(padvalue).row();
 		
-		synclabel 			= new Label("Wallet sync: ", uiSkin);
-		syncvalue			= new Label("0 / A lot", uiSkin, "redlabel");
+		synclabel 			= new Label("Wallet sync: ", game.uiSkin);
+		syncvalue			= new Label("0 / A lot", game.uiSkin, "redlabel");
 		walletlayout.add(synclabel).pad(padvalue);
 		walletlayout.add(syncvalue).pad(padvalue).row();
 		
-		unlockedlabel 		= new Label("Unlocked balance: ", uiSkin);
-		unlockedvalue		= new Label("Loading...", uiSkin, "redlabel");
+		unlockedlabel 		= new Label("Unlocked balance: ", game.uiSkin);
+		unlockedvalue		= new Label("Loading...", game.uiSkin, "redlabel");
 		walletlayout.add(unlockedlabel).pad(padvalue);
 		walletlayout.add(unlockedvalue).pad(padvalue).row();
 		
-		lockedlabel 		= new Label("Locked balance: ", uiSkin);
-		lockedvalue			= new Label("Loading...", uiSkin, "redlabel");
+		lockedlabel 		= new Label("Locked balance: ", game.uiSkin);
+		lockedvalue			= new Label("Loading...", game.uiSkin, "redlabel");
 		walletlayout.add(lockedlabel).pad(padvalue);
 		walletlayout.add(lockedvalue).pad(padvalue).row();
 		
-		savewalletbtn		= new TextButton("Save wallet\n(will attempt autosave every 60 s)", uiSkin);
-		savewalletlabel		= new Label("Not saved :(", uiSkin, "redlabel");
+		savewalletbtn		= new TextButton("Save wallet\n(will attempt autosave every 60 s)", game.uiSkin);
+		savewalletlabel		= new Label("Not saved :(", game.uiSkin, "redlabel");
 		walletlayout.add(savewalletbtn);
-		walletlayout.add(savewalletlabel);
+		walletlayout.add(savewalletlabel).fill().expand();
 		
 		addresslabel.addListener(new ClickListener() {
 	        @Override

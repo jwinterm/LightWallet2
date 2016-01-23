@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.jw.lightwallet.screens.MainScreen;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.jw.lightwallet.screens.PasswordScreen;
 import com.jw.lightwallet.screens.WizardScreen;
 import com.jw.lightwallet.utils.WalletValues;
@@ -15,6 +15,7 @@ import com.jw.lightwallet.utils.WalletValues;
 public class LightWallet extends Game {
 	
 	public static final String 	LOG = LightWallet.class.getSimpleName(); // Logging constant
+	public Skin					uiSkin;
 	
 	public String				dir;
 	public String				os;
@@ -37,8 +38,9 @@ public class LightWallet extends Game {
 			System.out.println(simplewalletloc);
 		}
 		
-		// Initialize logger
+		// Initialize logger and user interface skin
 		Gdx.app.log(LightWallet.LOG, "Launching application in " + dir + " on " + os);
+		uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
 		// Check if config file exists, if not launch setup wizard
 		File f = new File("lightwallet.conf");

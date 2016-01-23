@@ -19,7 +19,7 @@ public class Tx {
 		Tx tx = new Tx();
 		
 		// Get tx type
-		if (txstring.split(" money")[0].split(" ")[2] == "Received") {
+		if (txstring.split(" money")[0].split(" ")[2].equals("Received")) {
 			tx.type = Type.RECEIVED;
 		}
 		else {tx.type = Type.SPENT;}
@@ -33,5 +33,30 @@ public class Tx {
 		
 		return tx;
 	}
+	
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public long getAmount() {
+		return amount;
+	}
+
+	public void setAmount(long amount) {
+		this.amount = amount;
+	}
+
+	public String getTxid() {
+		return txid;
+	}
+
+	public void setTxid(String txid) {
+		this.txid = txid;
+	}
+
 
 }

@@ -2,6 +2,7 @@ package com.jw.lightwallet.screens;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,13 +13,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.AtomicQueue;
-import com.badlogic.gdx.utils.Timer;
 import com.jw.lightwallet.LightWallet;
 import com.jw.lightwallet.daemon.DaemonRPC;
 import com.jw.lightwallet.utils.BalanceValues;
@@ -69,7 +70,10 @@ public class MainScreen extends AbstractScreen {
 	Process					wp;
 	BufferedReader			wr;
 	AtomicQueue<String>		wq;
+	
+	// Transaction processing stuff
 	ArrayList<Tx>			txlist;
+	int						txcount;
 	
 
 	public MainScreen(final LightWallet game) {
@@ -77,6 +81,7 @@ public class MainScreen extends AbstractScreen {
 
 		wq 				= new AtomicQueue<String>(1000);
 		txlist			= new ArrayList<Tx>();
+		txcount			= 0;
 						
 		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
@@ -104,7 +109,7 @@ public class MainScreen extends AbstractScreen {
 	        public void clicked (InputEvent event, float x, float y) {
 	            System.out.println("Daemon button Pressed");
 	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
-	            viewcontainer.add(daemonview.daemonlayout).expand().bottom();
+	            viewcontainer.add(daemonview.daemonlayout);
 	        }
 	    });
 		walletbutton 	= new TextButton("Wallet", uiSkin);
@@ -113,7 +118,7 @@ public class MainScreen extends AbstractScreen {
 	        public void clicked (InputEvent event, float x, float y) {
 	            System.out.println("Wallet button Pressed");
 	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
-	            viewcontainer.add(walletview.walletlayout).expand().bottom();
+	            viewcontainer.add(walletview.walletlayout);
 	        }
 	    });		
 		transferbutton 	= new TextButton("Transfer", uiSkin);
@@ -122,7 +127,7 @@ public class MainScreen extends AbstractScreen {
 	        public void clicked (InputEvent event, float x, float y) {
 	            System.out.println("Transfer button Pressed");
 	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
-	            viewcontainer.add(transactionview.txlayout).expand().bottom();
+	            viewcontainer.add(transactionview.txlayout);
 	        }
 	    });		
 		txhistorybutton = new TextButton("History", uiSkin);
@@ -131,7 +136,7 @@ public class MainScreen extends AbstractScreen {
 	        public void clicked (InputEvent event, float x, float y) {
 	            System.out.println("History button Pressed");
 	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
-	            viewcontainer.add(transactionview.txlayout).expand().bottom();
+	            viewcontainer.add(historyview.historylayout);
 	        }
 	    });		
 		
@@ -139,7 +144,7 @@ public class MainScreen extends AbstractScreen {
 		buttonrow.add(walletbutton).width(Constants.WORLD_WIDTH/4);
 		buttonrow.add(transferbutton).width(Constants.WORLD_WIDTH/4);
 		buttonrow.add(txhistorybutton).width(Constants.WORLD_WIDTH/4);
-		screenlayout.add(buttonrow).row();
+		screenlayout.add(buttonrow).top().row();
 		
 		screenlayout.add(logo).pad(10).center().row();
 
@@ -268,6 +273,8 @@ public class MainScreen extends AbstractScreen {
 			}
 			else if (queuepoll != null && queuepoll.contains("money")) {
 				txlist.add(Tx.StringToTx(queuepoll));
+				// Gdx.app.log(LightWallet.LOG, "Found tx: " + txlist.get(txlist.size()-1).txid + 
+				// 		" of type " + txlist.get(txlist.size()-1).type + " and amount " + txlist.get(txlist.size()-1).amount);
 			}					
 		} catch (NullPointerException e){e.printStackTrace();}
 	}
@@ -278,7 +285,7 @@ public class MainScreen extends AbstractScreen {
 		Tx temptx = new Tx();
 		// Cycle through list of transactions from queue in last 60 s
 		if (txlist.size() > 0) {
-			for (int i = 0; i <= txlist.size(); i++) {
+			for (int i = 0; i < txlist.size(); i++) {
 				// If newtx flag then create a new temporary tx
 				if (newtx == true) { 
 					temptx = new Tx();
@@ -290,11 +297,11 @@ public class MainScreen extends AbstractScreen {
 				else if (newtx = false) {
 					temptx.amount += txlist.get(i).amount;
 				}
-				
+				newtx = false; // Change flag then run check in next if statement
 				// If the next tx is different or at the end of list, write current one to file and set flag
-				if ((i < txlist.size()-1 && 
-						(txlist.get(i).txid != txlist.get(i+1).txid || txlist.get(i).type != txlist.get(i+1).type)) 
-						|| i == txlist.size()-1) {
+				if (i < txlist.size()-1 && 
+						(!(txlist.get(i).txid.equals(txlist.get(i+1).txid)) || !(txlist.get(i).type.equals(txlist.get(i+1).type)) 
+						|| i == txlist.size()-1)) {
 					PrintWriter txout;
 					try {
 						txout = new PrintWriter(new BufferedWriter(new FileWriter(game.walletvalues.getName() + "tx.txt", true)));
@@ -306,10 +313,41 @@ public class MainScreen extends AbstractScreen {
 					}
 					newtx = true;					
 				}
-				
 			}
+		
+			// Clear tx list so don't rewrite same txs
+			txlist.clear();
 		}
 		
+		// Read lines from tx file into history view and make buttons
+		try (BufferedReader br = new BufferedReader(new FileReader(game.walletvalues.getName() + "tx.txt"))) {
+
+			String 	line;
+			int		linenum = 0;
+			while ((line = br.readLine()) != null) {
+				
+				System.out.println(linenum + ": " + line);
+				
+				if (linenum > 0) {
+					if (txcount < linenum) {
+						final TextButton tmpbtn = new TextButton(line, game.uiSkin);
+						tmpbtn.addListener(new ClickListener() {
+					        @Override
+					        public void clicked (InputEvent event, float x, float y) {
+					        	// Gdx.app.getClipboard().setContents(((String) tmpbtn.getText()).split(" | ")[2]);
+					        	Gdx.app.getClipboard().setContents(tmpbtn.getText().toString());
+					        }
+					    });
+						historyview.getContainer().add(tmpbtn).row();
+					}
+				}
+				
+				linenum += 1;
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

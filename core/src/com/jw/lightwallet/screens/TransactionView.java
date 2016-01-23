@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.jw.lightwallet.LightWallet;
 
 public class TransactionView {
 	
@@ -54,7 +53,7 @@ public class TransactionView {
 		txlayout.add(idvalue).pad(padvalue).width(600).row();
 		
 		sendbtn			= new TextButton("Payola!", uiSkin);
-		txlayout.add(sendbtn).row();
+		txlayout.add(sendbtn).fill().expand().row();
 
 		
 	}
