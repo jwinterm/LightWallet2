@@ -27,7 +27,6 @@ public class BalanceRPC {
 		Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {
 		        public void handleHttpResponse(HttpResponse httpResponse) {
 		                response = httpResponse.getResultAsString();
-		                //System.out.print("Balance response: " + response);
 		                BalanceResponse balanceresponse = new Gson().fromJson(response, BalanceResponse.class);
 		                balancevalues.setLockedbalance(balanceresponse.getResult().getLockedbalance());
 		                balancevalues.setUnlockedbalance(balanceresponse.getResult().getUnlockedbalance());

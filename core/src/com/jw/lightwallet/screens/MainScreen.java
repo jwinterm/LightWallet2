@@ -78,6 +78,7 @@ public class MainScreen extends AbstractScreen {
 	// Transaction processing stuff
 	ArrayList<Tx>			txlist;
 	int						txcount;
+	double					calcbalance;
 	DecimalFormat 			df;
 	
 
@@ -87,6 +88,7 @@ public class MainScreen extends AbstractScreen {
 		wq 				= new AtomicQueue<String>(1000);
 		txlist			= new ArrayList<Tx>();
 		txcount			= 0;
+		calcbalance		= 0;
 		df 				= new DecimalFormat("#.############");
 						
 		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
@@ -152,7 +154,7 @@ public class MainScreen extends AbstractScreen {
 
 		daemonview 		= new DaemonView(game);
 		walletview 		= new WalletView(game, walletsaverpc);
-		transactionview	= new TransactionView(game);
+		transactionview	= new TransactionView(game, stage);
 		historyview		= new HistoryView(game);
 		viewcontainer.add(daemonview.daemonlayout).expand().fill();
 		screenlayout.add(viewcontainer);
@@ -210,8 +212,8 @@ public class MainScreen extends AbstractScreen {
 		if (fivesectimer == true) {
 			// Timer task to check balance from simplewallet
 			balancerpc.getinfo(balancevalues);
-			walletview.lockedvalue.setText(balancevalues.getLockedbalance().toString());
-			walletview.unlockedvalue.setText(balancevalues.getUnlockedbalance().toString());
+			walletview.lockedvalue.setText(df.format(balancevalues.getLockedbalance()/1e12) + " XMR");
+			walletview.unlockedvalue.setText(df.format(balancevalues.getUnlockedbalance()/1e12) + " XMR");
 			if (balancevalues.isChecked()) {
 				walletview.lockedvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
 				walletview.unlockedvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
@@ -224,7 +226,8 @@ public class MainScreen extends AbstractScreen {
 		}
 		if (tensectimer == true) {
 			// Timer task to get network info from daemon
-			daemonrpc.getinfo(daemonvalues);
+			Gdx.app.log(LightWallet.LOG, "Checking daemon...");
+			daemonrpc.getinfo(daemonvalues, game.walletvalues.getNode());
 			daemonview.Update(daemonvalues);
 			tensectimer = false;
 			accum10s = 0;
@@ -331,7 +334,6 @@ public class MainScreen extends AbstractScreen {
 		// Cycle through list of transactions from queue in last 60 s
 		if (txlist.size() > 0) {
 			for (int i = 0; i < txlist.size(); i++) {
-				Gdx.app.log(LightWallet.LOG, i + ": newtx is - " + newtx);
 				// If newtx flag then create a new temporary tx
 				if (newtx == true) { 
 					temptx = new Tx();
@@ -383,6 +385,13 @@ public class MainScreen extends AbstractScreen {
 					        }
 					    });
 						historyview.getContainer().add(tmpbtn).fillX().row();
+						if (line.split(" | ")[0].equals("RECEIVED")) {
+							calcbalance += Double.parseDouble(tmpbtn.getText().toString().split(" | ")[2]);
+						} else {
+							calcbalance -= Double.parseDouble(tmpbtn.getText().toString().split(" | ")[2]);
+						}
+						walletview.calcedvalue.setText(df.format(calcbalance) + " XMR");
+						txcount += 1;
 					}
 				}
 				linenum += 1;

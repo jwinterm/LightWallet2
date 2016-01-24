@@ -15,13 +15,14 @@ public class DaemonRPC {
 	String			getlastblock;
 	
 	public DaemonRPC () {
-		address = "http://node.moneroclub.com:8880/json_rpc";
+		// address = "http://node.moneroclub.com:8880/json_rpc";
+		// address = "http://localhost:18081/json_rpc";
 		getlastblock = "{\"jsonrpc\":\"2.0\",\"id\":\"test\",\"method\":\"getlastblockheader\",\"params\":[]}";
 	}
 	
-	public void getinfo (final DaemonValues daemonvalues) {
+	public void getinfo (final DaemonValues daemonvalues, String nodeaddress) {
 		HttpRequest httpGet = new HttpRequest(HttpMethods.POST);
-		httpGet.setUrl(address);
+		httpGet.setUrl(nodeaddress + "/json_rpc");
 		httpGet.setContent(getlastblock);		
 
 		Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {

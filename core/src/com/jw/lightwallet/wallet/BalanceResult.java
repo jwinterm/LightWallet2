@@ -2,20 +2,20 @@ package com.jw.lightwallet.wallet;
 
 public class BalanceResult {
 	
-	long	unlockedbalance;
-	long	lockedbalance;
+	long	unlocked_balance;
+	long	balance;
 	
 	public long getUnlockedbalance() {
-		return unlockedbalance;
+		return unlocked_balance;
 	}
-	public void setUnlockedbalance(long unlockedbalance) {
-		this.unlockedbalance = unlockedbalance;
+	public void setUnlockedbalance(long unlocked_balance) {
+		this.unlocked_balance = unlocked_balance;
 	}
 	public long getLockedbalance() {
-		return lockedbalance;
+		return balance;
 	}
-	public void setLockedbalance(long lockedbalance) {
-		this.lockedbalance = lockedbalance;
+	public void setLockedbalance(long balance) {
+		this.balance = balance;
 	}
 
 }

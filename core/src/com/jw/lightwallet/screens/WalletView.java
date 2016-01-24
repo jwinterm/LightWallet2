@@ -38,7 +38,7 @@ public class WalletView {
 		this.walletsaverpc 	= walletsaverpc;
 				
 		walletlayout 		= new Table();
-		padvalue			= 10;
+		padvalue			= 12;
 
 		namelabel 			= new Label("Name: ", game.uiSkin);
 		namevalue			= new Label(game.walletvalues.getName(), game.uiSkin);
@@ -67,7 +67,7 @@ public class WalletView {
 		walletlayout.add(lockedvalue).pad(padvalue).row();
 		
 		calcedlabel 		= new Label("Calculated balance: ", game.uiSkin);
-		calcedvalue			= new Label("Loading...", game.uiSkin);
+		calcedvalue			= new Label("None", game.uiSkin);
 		walletlayout.add(calcedlabel).pad(padvalue);
 		walletlayout.add(calcedvalue).pad(padvalue).row();		
 		

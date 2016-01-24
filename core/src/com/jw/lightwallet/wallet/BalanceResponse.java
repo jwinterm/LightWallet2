@@ -1,7 +1,5 @@
 package com.jw.lightwallet.wallet;
 
-import com.jw.lightwallet.wallet.BalanceResult;
-
 public class BalanceResponse {
 
 	String id;
