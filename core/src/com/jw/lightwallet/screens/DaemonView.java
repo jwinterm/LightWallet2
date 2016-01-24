@@ -14,8 +14,6 @@ public class DaemonView {
 	
 	LightWallet game;
 	
-	Skin 		uiSkin;
-	
 	Table		daemonlayout;
 	
 	Label		nodelabel;
@@ -37,51 +35,48 @@ public class DaemonView {
 	public DaemonView (final LightWallet game) {
 	
 	this.game		= game;
-		
-	uiSkin 			= new Skin(Gdx.files.internal("skin/uiskin.json"));
-		
+				
 	daemonlayout 	= new Table();
 	padvalue		= 15;
 
 	
-	nodelabel 		= new Label("Node address: ", uiSkin);
-	nodevalue		= new Label(null, uiSkin);
+	nodelabel 		= new Label("Node address: ", game.uiSkin);
+	nodevalue		= new Label(null, game.uiSkin);
 	daemonlayout.add(nodelabel).pad(padvalue);
 	daemonlayout.add(nodevalue).pad(padvalue).row();
 	
-	statuslabel 	= new Label("Node status: ", uiSkin);
-	statusvalue		= new Label(null, uiSkin);
+	statuslabel 	= new Label("Node status: ", game.uiSkin);
+	statusvalue		= new Label(null, game.uiSkin);
 	daemonlayout.add(statuslabel).pad(padvalue);
 	daemonlayout.add(statusvalue).pad(padvalue).row();
 	
-	heightlabel 	= new Label("Block height: ", uiSkin);
-	heightvalue		= new Label(null, uiSkin);
+	heightlabel 	= new Label("Block height: ", game.uiSkin);
+	heightvalue		= new Label(null, game.uiSkin);
 	daemonlayout.add(heightlabel).pad(padvalue);
 	daemonlayout.add(heightvalue).pad(padvalue).row();
 	
-	hashratelabel 	= new Label("Network hashrate: ", uiSkin);
-	hashratevalue	= new Label(null, uiSkin);
+	hashratelabel 	= new Label("Network hashrate: ", game.uiSkin);
+	hashratevalue	= new Label(null, game.uiSkin);
 	daemonlayout.add(hashratelabel).pad(padvalue);
 	daemonlayout.add(hashratevalue).pad(padvalue).row();
 	
-	timelabel 		= new Label("Last block time: ", uiSkin);
-	timevalue		= new Label(null, uiSkin);
+	timelabel 		= new Label("Last block time: ", game.uiSkin);
+	timevalue		= new Label(null, game.uiSkin);
 	daemonlayout.add(timelabel).pad(padvalue);
 	daemonlayout.add(timevalue).pad(padvalue).row();
 	
-	rewardlabel 	= new Label("Last reward: ", uiSkin);
-	rewardvalue		= new Label(null, uiSkin);
+	rewardlabel 	= new Label("Last reward: ", game.uiSkin);
+	rewardvalue		= new Label(null, game.uiSkin);
 	daemonlayout.add(rewardlabel).pad(padvalue);
-	daemonlayout.add(rewardvalue).pad(padvalue).row();
+	daemonlayout.add(rewardvalue).pad(padvalue);
 	
-	daemonlayout.add(new Label("", uiSkin));
 	}
 	
 	public void Update(DaemonValues daemonvalues) {
 		nodevalue.setText(game.walletvalues.getNode());
 		statusvalue.setText(daemonvalues.getStatus());
-		Gdx.app.log(LightWallet.LOG, "Status value is: " + statusvalue.getText());
-		if (statusvalue.getText().toString().equals("OK")) {statusvalue.setStyle(uiSkin.get("greenlabel", LabelStyle.class));}
+		// Gdx.app.log(LightWallet.LOG, "Status value is: " + statusvalue.getText());
+		if (statusvalue.getText().toString().equals("OK")) {statusvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));}
 		heightvalue.setText(String.valueOf(daemonvalues.getBlockheight()));
 		hashratevalue.setText(new DecimalFormat("##.##").format(daemonvalues.getHashrate()) + " Mh/s");
 		timevalue.setText(String.valueOf(new java.util.Date(daemonvalues.getLastblocktime()*1000)));

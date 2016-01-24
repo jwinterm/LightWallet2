@@ -3,7 +3,6 @@ package com.jw.lightwallet.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -25,7 +24,9 @@ public class WalletView {
 	Label			unlockedlabel;
 	Label			unlockedvalue;
 	Label			lockedlabel;
-	Label			lockedvalue;	
+	Label			lockedvalue;
+	Label			calcedlabel;
+	Label			calcedvalue;
 	TextButton		savewalletbtn;
 	Label			savewalletlabel;
 	
@@ -37,7 +38,7 @@ public class WalletView {
 		this.walletsaverpc 	= walletsaverpc;
 				
 		walletlayout 		= new Table();
-		padvalue			= 16;
+		padvalue			= 10;
 
 		namelabel 			= new Label("Name: ", game.uiSkin);
 		namevalue			= new Label(game.walletvalues.getName(), game.uiSkin);
@@ -65,7 +66,12 @@ public class WalletView {
 		walletlayout.add(lockedlabel).pad(padvalue);
 		walletlayout.add(lockedvalue).pad(padvalue).row();
 		
-		savewalletbtn		= new TextButton("Save wallet\n(will attempt autosave every 60 s)", game.uiSkin);
+		calcedlabel 		= new Label("Calculated balance: ", game.uiSkin);
+		calcedvalue			= new Label("Loading...", game.uiSkin);
+		walletlayout.add(calcedlabel).pad(padvalue);
+		walletlayout.add(calcedvalue).pad(padvalue).row();		
+		
+		savewalletbtn		= new TextButton("Save (attempts autosave every 60 s)", game.uiSkin);
 		savewalletlabel		= new Label("Not saved :(", game.uiSkin, "redlabel");
 		walletlayout.add(savewalletbtn);
 		walletlayout.add(savewalletlabel);

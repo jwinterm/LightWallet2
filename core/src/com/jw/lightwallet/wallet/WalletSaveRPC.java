@@ -7,10 +7,7 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.google.gson.Gson;
 import com.jw.lightwallet.LightWallet;
-import com.jw.lightwallet.screens.WalletView;
-import com.jw.lightwallet.utils.WalletSaveValues;
 
 
 public class WalletSaveRPC {

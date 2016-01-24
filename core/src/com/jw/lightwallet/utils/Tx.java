@@ -5,7 +5,7 @@ public class Tx {
 	
 	public static enum	Type {SPENT, RECEIVED};
 	public Type 		type;
-	public long			amount;
+	public double		amount;
 	public String		txid;
 	
 	public Tx() {
@@ -25,7 +25,7 @@ public class Tx {
 		else {tx.type = Type.SPENT;}
 		
 		// Get tx amount
-		tx.amount = (long) (Double.parseDouble(txstring.split(": ")[1].split(",")[0]) * 1e12);
+		tx.amount = Double.parseDouble(txstring.split(": ")[1].split(",")[0]);
 		
 		// Get tx id
 		String temptxid = txstring.split("<")[1];
@@ -42,7 +42,7 @@ public class Tx {
 		this.type = type;
 	}
 
-	public long getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 

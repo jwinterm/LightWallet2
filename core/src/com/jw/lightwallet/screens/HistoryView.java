@@ -1,12 +1,13 @@
 package com.jw.lightwallet.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.jw.lightwallet.LightWallet;
 
 public class HistoryView {
+	
+	LightWallet	game;
 	
 	Table			historylayout;
 	
@@ -16,20 +17,19 @@ public class HistoryView {
 	int 			padvalue;
 
 	
-	public HistoryView () {
-		
-		Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-		
+	public HistoryView (LightWallet game) {	
+		this.game		= game;
+				
 		historylayout	= new Table();
 		padvalue		= 15;
 		
 		container		= new Table();
-		scroller		= new ScrollPane(container, uiSkin);
+		scroller		= new ScrollPane(container, game.uiSkin);
 		
 		
-		historylayout.add(new Label("Transaction history (click to copy txid)", uiSkin)).row();
-		historylayout.add(new Label("Type | Amount | Transaction ID", uiSkin)).row();
-		historylayout.add(scroller).fill();
+		historylayout.add(new Label("Transaction history (click to copy txid)", game.uiSkin)).row();
+		historylayout.add(new Label("Type | Amount | Transaction ID", game.uiSkin)).row();
+		historylayout.add(scroller);
 
 		
 	}

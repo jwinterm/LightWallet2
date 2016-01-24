@@ -31,13 +31,12 @@ public class BalanceRPC {
 		                BalanceResponse balanceresponse = new Gson().fromJson(response, BalanceResponse.class);
 		                balancevalues.setLockedbalance(balanceresponse.getResult().getLockedbalance());
 		                balancevalues.setUnlockedbalance(balanceresponse.getResult().getUnlockedbalance());
-
+		                balancevalues.setChecked(true);
 		        }
 		 
 		        public void failed(Throwable t) {
 		                response = "failed";
-		                //System.out.print("Failed response status is: " + response);
-		                //do stuff here based on the failed attempt
+		                balancevalues.setChecked(false);
 		        }
 
 				@Override

@@ -1,13 +1,14 @@
 package com.jw.lightwallet.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.jw.lightwallet.LightWallet;
 
 public class TransactionView {
+	
+	LightWallet	game;
 	
 	Table		txlayout;
 	
@@ -25,35 +26,35 @@ public class TransactionView {
 	int 		padvalue;
 
 
-	public TransactionView () {
-		
-		Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-		
+	public TransactionView (LightWallet game) {
+		this.game		= game;
+				
 		txlayout 		= new Table();
 		padvalue		= 15;
 
-		addresslabel 	= new Label("Send to address: ", uiSkin);
-		addressvalue	= new TextField("", uiSkin, "tinytext");
+		addresslabel 	= new Label("Send to address: ", game.uiSkin);
+		addressvalue	= new TextField("", game.uiSkin, "tinytext");
 		txlayout.add(addresslabel).pad(padvalue).width(100);
 		txlayout.add(addressvalue).pad(padvalue).width(600).row();
 		
-		amountlabel 	= new Label("Send amount XMR: ", uiSkin);
-		amountvalue		= new TextField("", uiSkin);
+		amountlabel 	= new Label("Send amount XMR: ", game.uiSkin);
+		amountvalue		= new TextField("", game.uiSkin);
 		txlayout.add(amountlabel).pad(padvalue).width(100);
 		txlayout.add(amountvalue).pad(padvalue).width(100).row();
 		
-		mixinlabel 		= new Label("Mixin level: ", uiSkin);
-		mixinvalue		= new TextField("", uiSkin);
+		mixinlabel 		= new Label("Mixin level: ", game.uiSkin);
+		mixinvalue		= new TextField("", game.uiSkin);
 		txlayout.add(mixinlabel).pad(padvalue).width(100);
 		txlayout.add(mixinvalue).pad(padvalue).width(50).row();
 		
-		idlabel 		= new Label("Payment id: ", uiSkin);
-		idvalue			= new TextField("", uiSkin, "tinytext");
+		idlabel 		= new Label("Payment id: ", game.uiSkin);
+		idvalue			= new TextField("", game.uiSkin, "tinytext");
 		txlayout.add(idlabel).pad(padvalue).width(100);
 		txlayout.add(idvalue).pad(padvalue).width(600).row();
 		
-		sendbtn			= new TextButton("Payola!", uiSkin);
-		txlayout.add(sendbtn).fill().expand().row();
+		sendbtn			= new TextButton("Payola!", game.uiSkin);
+		txlayout.add(new Label("", game.uiSkin));
+		txlayout.add(sendbtn);
 
 		
 	}

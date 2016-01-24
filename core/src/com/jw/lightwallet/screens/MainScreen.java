@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -23,7 +23,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.AtomicQueue;
 import com.jw.lightwallet.LightWallet;
 import com.jw.lightwallet.daemon.DaemonRPC;
@@ -79,6 +78,7 @@ public class MainScreen extends AbstractScreen {
 	// Transaction processing stuff
 	ArrayList<Tx>			txlist;
 	int						txcount;
+	DecimalFormat 			df;
 	
 
 	public MainScreen(final LightWallet game) {
@@ -87,6 +87,7 @@ public class MainScreen extends AbstractScreen {
 		wq 				= new AtomicQueue<String>(1000);
 		txlist			= new ArrayList<Tx>();
 		txcount			= 0;
+		df 				= new DecimalFormat("#.############");
 						
 		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
@@ -112,7 +113,6 @@ public class MainScreen extends AbstractScreen {
 		daemonbutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
-	            System.out.println("Daemon button Pressed");
 	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
 	            viewcontainer.add(daemonview.daemonlayout);
 	        }
@@ -121,7 +121,6 @@ public class MainScreen extends AbstractScreen {
 		walletbutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
-	            System.out.println("Wallet button Pressed");
 	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
 	            viewcontainer.add(walletview.walletlayout);
 	        }
@@ -130,7 +129,6 @@ public class MainScreen extends AbstractScreen {
 		transferbutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
-	            System.out.println("Transfer button Pressed");
 	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
 	            viewcontainer.add(transactionview.txlayout);
 	        }
@@ -139,7 +137,6 @@ public class MainScreen extends AbstractScreen {
 		txhistorybutton.addListener(new ClickListener() {
 	        @Override
 	        public void clicked (InputEvent event, float x, float y) {
-	            System.out.println("History button Pressed");
 	            viewcontainer.removeActor(viewcontainer.getChildren().get(0));
 	            viewcontainer.add(historyview.historylayout);
 	        }
@@ -155,8 +152,8 @@ public class MainScreen extends AbstractScreen {
 
 		daemonview 		= new DaemonView(game);
 		walletview 		= new WalletView(game, walletsaverpc);
-		transactionview	= new TransactionView();
-		historyview		= new HistoryView();
+		transactionview	= new TransactionView(game);
+		historyview		= new HistoryView(game);
 		viewcontainer.add(daemonview.daemonlayout).expand().fill();
 		screenlayout.add(viewcontainer);
 		
@@ -165,6 +162,9 @@ public class MainScreen extends AbstractScreen {
 		screenlayout.top();
 		// screenlayout.setDebug(true);
 		stage.addActor(screenlayout);
+		
+		// Check tx file
+		dumptxlist();
 	}
 	
 	public void show() {
@@ -210,6 +210,15 @@ public class MainScreen extends AbstractScreen {
 		if (fivesectimer == true) {
 			// Timer task to check balance from simplewallet
 			balancerpc.getinfo(balancevalues);
+			walletview.lockedvalue.setText(balancevalues.getLockedbalance().toString());
+			walletview.unlockedvalue.setText(balancevalues.getUnlockedbalance().toString());
+			if (balancevalues.isChecked()) {
+				walletview.lockedvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
+				walletview.unlockedvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
+			} else {
+				walletview.lockedvalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
+				walletview.unlockedvalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
+			}
 			fivesectimer = false;
 			accum5s = 0;
 		}
@@ -271,12 +280,10 @@ public class MainScreen extends AbstractScreen {
 	public void readwalletqueue () {
 		// Poll wallet thread and check block height and if transaction data is in output
 		String queuepoll = wq.poll();
-		// Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
 		try{
 			// If the string contains "height" then update the daemon and wallet screen blockheight
 			if (queuepoll != null && queuepoll.contains("height:")) {
 				String height = queuepoll.split("height: ")[1].split(",")[0];
-				Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
 				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
 				if (height.equals(Integer.toString(daemonvalues.getBlockheight()))) {
 					walletview.syncvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
@@ -284,7 +291,6 @@ public class MainScreen extends AbstractScreen {
 			}
 			else if (queuepoll != null && queuepoll.contains("height ")) {
 				String height = queuepoll.split("height ")[1].split(",")[0];
-				Gdx.app.log(LightWallet.LOG, "Queue result: " + queuepoll);
 				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
 				if (height.equals(Integer.toString(daemonvalues.getBlockheight()))) {
 					walletview.syncvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
@@ -293,8 +299,6 @@ public class MainScreen extends AbstractScreen {
 			// If the string contains "money" then create a tx and add it to the txlist
 			else if (queuepoll != null && queuepoll.contains("money")) {
 				txlist.add(Tx.StringToTx(queuepoll));
-				// Gdx.app.log(LightWallet.LOG, "Found tx: " + txlist.get(txlist.size()-1).txid + 
-				// 		" of type " + txlist.get(txlist.size()-1).type + " and amount " + txlist.get(txlist.size()-1).amount);
 			}
 			// If the string contains "invalid password" then show popup and return to password screen
 			else if (queuepoll != null && queuepoll.contains("invalid password")) {
@@ -327,6 +331,7 @@ public class MainScreen extends AbstractScreen {
 		// Cycle through list of transactions from queue in last 60 s
 		if (txlist.size() > 0) {
 			for (int i = 0; i < txlist.size(); i++) {
+				Gdx.app.log(LightWallet.LOG, i + ": newtx is - " + newtx);
 				// If newtx flag then create a new temporary tx
 				if (newtx == true) { 
 					temptx = new Tx();
@@ -335,18 +340,21 @@ public class MainScreen extends AbstractScreen {
 					temptx.txid = txlist.get(i).txid;
 				}
 				// If newtx flag is false then append amount to temp tx
-				else if (newtx = false) {
+				else if (newtx == false) {
 					temptx.amount += txlist.get(i).amount;
 				}
+				
 				newtx = false; // Change flag then run check in next if statement
+
 				// If the next tx is different or at the end of list, write current one to file and set flag
-				if (i < txlist.size()-1 && 
-						(!(txlist.get(i).txid.equals(txlist.get(i+1).txid)) || !(txlist.get(i).type.equals(txlist.get(i+1).type)) 
-						|| i == txlist.size()-1)) {
+				if ((i < txlist.size()-1 && 
+						(!(txlist.get(i).txid.toString().equals(txlist.get(i+1).txid.toString())) ||
+								(txlist.get(i).type != txlist.get(i+1).type)))
+						|| i == txlist.size()-1) {
 					PrintWriter txout;
 					try {
 						txout = new PrintWriter(new BufferedWriter(new FileWriter(game.walletvalues.getName() + "tx.txt", true)));
-						txout.println(temptx.type + " | " + temptx.amount + " | " + temptx.txid);
+						txout.println(temptx.type + " | " + df.format(temptx.amount) + " | " + temptx.txid);
 						txout.close();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -362,30 +370,23 @@ public class MainScreen extends AbstractScreen {
 		
 		// Read lines from tx file into history view and make buttons
 		try (BufferedReader br = new BufferedReader(new FileReader(game.walletvalues.getName() + "tx.txt"))) {
-
 			String 	line;
 			int		linenum = 0;
-			while ((line = br.readLine()) != null) {
-				
-				System.out.println(linenum + ": " + line);
-				
+			while ((line = br.readLine()) != null) {				
 				if (linenum > 0) {
 					if (txcount < linenum) {
-						final TextButton tmpbtn = new TextButton(line, game.uiSkin);
+						final TextButton tmpbtn = new TextButton(line, game.uiSkin, "tinytext");
 						tmpbtn.addListener(new ClickListener() {
 					        @Override
 					        public void clicked (InputEvent event, float x, float y) {
-					        	// Gdx.app.getClipboard().setContents(((String) tmpbtn.getText()).split(" | ")[2]);
-					        	Gdx.app.getClipboard().setContents(tmpbtn.getText().toString());
+					        	Gdx.app.getClipboard().setContents(tmpbtn.getText().toString().split(" | ")[4]);
 					        }
 					    });
-						historyview.getContainer().add(tmpbtn).row();
+						historyview.getContainer().add(tmpbtn).fillX().row();
 					}
 				}
-				
 				linenum += 1;
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
