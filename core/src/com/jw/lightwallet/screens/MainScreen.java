@@ -154,7 +154,7 @@ public class MainScreen extends AbstractScreen {
 
 		daemonview 		= new DaemonView(game);
 		walletview 		= new WalletView(game, walletsaverpc);
-		transactionview	= new TransactionView(game, stage);
+		transactionview	= new TransactionView(game, stage, balancevalues);
 		historyview		= new HistoryView(game);
 		viewcontainer.add(daemonview.daemonlayout).expand().fill();
 		screenlayout.add(viewcontainer);
@@ -226,7 +226,6 @@ public class MainScreen extends AbstractScreen {
 		}
 		if (tensectimer == true) {
 			// Timer task to get network info from daemon
-			Gdx.app.log(LightWallet.LOG, "Checking daemon...");
 			daemonrpc.getinfo(daemonvalues, game.walletvalues.getNode());
 			daemonview.Update(daemonvalues);
 			tensectimer = false;
@@ -301,7 +300,9 @@ public class MainScreen extends AbstractScreen {
 			}
 			// If the string contains "money" then create a tx and add it to the txlist
 			else if (queuepoll != null && queuepoll.contains("money")) {
-				txlist.add(Tx.StringToTx(queuepoll));
+				try {
+					txlist.add(Tx.StringToTx(queuepoll));
+					} catch (java.lang.NumberFormatException e) {System.out.println("Not enough moneys");}
 			}
 			// If the string contains "invalid password" then show popup and return to password screen
 			else if (queuepoll != null && queuepoll.contains("invalid password")) {
