@@ -122,7 +122,7 @@ public class ImportKeysScreen extends AbstractScreen {
 		buttontable.add(importbutton).width(150);
 		buttontable.add(gobackbutton).width(150);
 		
-		screenlayout.add(logo).pad(10).width(200).height(50).center().row();
+		screenlayout.add(logo).pad(10).width(200).height(70).center().row();
 		screenlayout.add(textcontainer).pad(padvalue).row();
 		screenlayout.add(inputtable).pad(padvalue).row();
 		screenlayout.add(buttontable).pad(padvalue).row();
@@ -220,9 +220,9 @@ public class ImportKeysScreen extends AbstractScreen {
 
 	    
         try {
-            Process tr = Runtime.getRuntime().exec("simplewallet --wallet-file " + name + " --password " + pw + " --daemon-address http://localhost:66666");
-            Writer wr = new OutputStreamWriter( tr.getOutputStream() );
-            BufferedReader rd = new BufferedReader( new InputStreamReader( tr.getInputStream() ) );
+            Process wp = Runtime.getRuntime().exec("simplewallet --wallet-file " + name + " --password " + pw + " --daemon-address http://localhost:66666");
+            Writer wr = new OutputStreamWriter( wp.getOutputStream() );
+            BufferedReader rd = new BufferedReader( new InputStreamReader( wp.getInputStream() ) );
             
             System.out.println("Here is the standard output of the command:\n");
             while (true) {
@@ -277,6 +277,8 @@ public class ImportKeysScreen extends AbstractScreen {
             PrintWriter txwriter = new PrintWriter(name + "tx.txt", "UTF-8");
             txwriter.println("Transaction history (Type | Amount | Tx ID): ");
             txwriter.close();
+            
+            wp.destroy();
             
             successlabel.setText("Wallet successfully imported. " + game.walletvalues.getName() + " file is your binary wallet file. "
 	    		+ game.walletvalues.getName() + ".keys is your keys file; "

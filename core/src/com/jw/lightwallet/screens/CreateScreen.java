@@ -128,7 +128,7 @@ public class CreateScreen extends AbstractScreen {
 		buttontable.add(createbutton).width(150);
 		buttontable.add(gobackbutton).width(150);
 		
-		screenlayout.add(logo).pad(10).width(200).height(50).center().row();
+		screenlayout.add(logo).pad(10).width(200).height(70).center().row();
 		screenlayout.add(textcontainer).pad(padvalue).row();
 		screenlayout.add(inputtable).pad(padvalue).row();
 		screenlayout.add(buttontable).pad(padvalue).row();
@@ -193,9 +193,9 @@ public class CreateScreen extends AbstractScreen {
     	System.out.println("Starting creator");
 	    
 	        try {
-	            Process tr = Runtime.getRuntime().exec("simplewallet --generate-new-wallet " + name + " --password " + pw);
-	            Writer wr = new OutputStreamWriter( tr.getOutputStream() );
-	            BufferedReader rd = new BufferedReader( new InputStreamReader( tr.getInputStream() ) );
+	            Process wp = Runtime.getRuntime().exec("simplewallet --generate-new-wallet " + name + " --password " + pw);
+	            Writer wr = new OutputStreamWriter( wp.getOutputStream() );
+	            BufferedReader rd = new BufferedReader( new InputStreamReader( wp.getInputStream() ) );
 	            
 	            System.out.println("Here is the standard output of the command:\n");
 	            while (true) {
@@ -218,10 +218,10 @@ public class CreateScreen extends AbstractScreen {
 	                if (str.contains("new wallet:")) {
 	                	game.walletvalues.setAddress(str.split("wallet: ")[1]);
 	                }
-	                if (str.contains("view key:")) {
+	                if (str.contains("View key:")) {
 	                	game.walletvalues.setViewkey(str.split("key: ")[1]);
 	                }
-	                if (i >=23 && i <=26) {seed += str;}
+	                if (i >=23 && i <=26) {seed += " " + str;}
 	            }	            
 	            
 	            wr.write( "exit\n" );
@@ -250,6 +250,8 @@ public class CreateScreen extends AbstractScreen {
 	            PrintWriter txwriter = new PrintWriter(name + "tx.txt", "UTF-8");
 	            txwriter.println("Transaction history (Type | Amount | Tx ID): ");
 	            txwriter.close();
+	            
+	            wp.destroy();
 	            
 	    	    success_dialog.show(stage);
 	        }

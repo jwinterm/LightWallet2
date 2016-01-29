@@ -94,7 +94,7 @@ public class PasswordScreen extends AbstractScreen {
 	        });	
 		buttontable.add(createbutton).width(150);
 		
-		screenlayout.add(logo).pad(10).width(200).height(50).center().row();
+		screenlayout.add(logo).pad(10).width(200).height(70).center().row();
 		screenlayout.add(textcontainer).pad(padvalue).row();
 		screenlayout.add(inputtable).pad(padvalue).row();
 		screenlayout.add(buttontable).pad(padvalue).row();
