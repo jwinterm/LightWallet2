@@ -22,7 +22,7 @@ public class DaemonValues {
 	}
 	public void setDiff(int diff) {
 		this.diff = diff;
-		this.hashrate = diff/60;
+		this.hashrate = diff/120;
 	}
 	public float getHashrate() {
 		return hashrate/1e6f;
