@@ -23,8 +23,8 @@ public class WalletView {
 	Label			syncvalue;
 	Label			unlockedlabel;
 	Label			unlockedvalue;
-	Label			lockedlabel;
-	Label			lockedvalue;
+	Label			balancelabel;
+	Label			balancevalue;
 	Label			calcedlabel;
 	Label			calcedvalue;
 	TextButton		savewalletbtn;
@@ -61,10 +61,10 @@ public class WalletView {
 		walletlayout.add(unlockedlabel).pad(padvalue);
 		walletlayout.add(unlockedvalue).pad(padvalue).row();
 		
-		lockedlabel 		= new Label("Locked balance: ", game.uiSkin);
-		lockedvalue			= new Label("Loading...", game.uiSkin, "redlabel");
-		walletlayout.add(lockedlabel).pad(padvalue);
-		walletlayout.add(lockedvalue).pad(padvalue).row();
+		balancelabel 		= new Label("Balance: ", game.uiSkin);
+		balancevalue			= new Label("Loading...", game.uiSkin, "redlabel");
+		walletlayout.add(balancelabel).pad(padvalue);
+		walletlayout.add(balancevalue).pad(padvalue).row();
 		
 		calcedlabel 		= new Label("Calculated balance: ", game.uiSkin);
 		calcedvalue			= new Label("None", game.uiSkin);

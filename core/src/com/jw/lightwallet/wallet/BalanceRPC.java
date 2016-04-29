@@ -28,7 +28,7 @@ public class BalanceRPC {
 		        public void handleHttpResponse(HttpResponse httpResponse) {
 		                response = httpResponse.getResultAsString();
 		                BalanceResponse balanceresponse = new Gson().fromJson(response, BalanceResponse.class);
-		                balancevalues.setLockedbalance(balanceresponse.getResult().getLockedbalance());
+		                balancevalues.setBalance(balanceresponse.getResult().getBalance());
 		                balancevalues.setUnlockedbalance(balanceresponse.getResult().getUnlockedbalance());
 		                balancevalues.setChecked(true);
 		        }

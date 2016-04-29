@@ -212,13 +212,13 @@ public class MainScreen extends AbstractScreen {
 		if (fivesectimer == true) {
 			// Timer task to check balance from simplewallet
 			balancerpc.getinfo(balancevalues);
-			walletview.lockedvalue.setText(df.format(balancevalues.getLockedbalance()/1e12) + " XMR");
+			walletview.balancevalue.setText(df.format(balancevalues.getBalance()/1e12) + " XMR");
 			walletview.unlockedvalue.setText(df.format(balancevalues.getUnlockedbalance()/1e12) + " XMR");
 			if (balancevalues.isChecked()) {
-				walletview.lockedvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
+				walletview.balancevalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
 				walletview.unlockedvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
 			} else {
-				walletview.lockedvalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
+				walletview.balancevalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
 				walletview.unlockedvalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
 			}
 			fivesectimer = false;

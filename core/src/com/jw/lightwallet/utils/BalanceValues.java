@@ -3,7 +3,7 @@ package com.jw.lightwallet.utils;
 public class BalanceValues {
 	
 	long		unlockedbalance;
-	long		lockedbalance;
+	long		balance;
 	boolean		checked;
 	
 	public boolean isChecked() {
@@ -18,11 +18,11 @@ public class BalanceValues {
 	public void setUnlockedbalance(long unlockedbalance) {
 		this.unlockedbalance = unlockedbalance;
 	}
-	public Long getLockedbalance() {
-		return lockedbalance;
+	public Long getBalance() {
+		return balance;
 	}
-	public void setLockedbalance(long lockedbalance) {
-		this.lockedbalance = lockedbalance;
+	public void setBalance(long balance) {
+		this.balance = balance;
 	}
 
 }

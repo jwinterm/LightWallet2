@@ -11,10 +11,10 @@ public class BalanceResult {
 	public void setUnlockedbalance(long unlocked_balance) {
 		this.unlocked_balance = unlocked_balance;
 	}
-	public long getLockedbalance() {
+	public long getBalance() {
 		return balance;
 	}
-	public void setLockedbalance(long balance) {
+	public void setBalance(long balance) {
 		this.balance = balance;
 	}
 
