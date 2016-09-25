@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -193,7 +195,7 @@ public class CreateScreen extends AbstractScreen {
     	System.out.println("Starting creator");
 	    
 	        try {
-	            Process wp = Runtime.getRuntime().exec("simplewallet --generate-new-wallet " + name + " --password " + pw);
+	            Process wp = Runtime.getRuntime().exec("monero-wallet-cli --generate-new-wallet " + name + " --password " + pw);
 	            Writer wr = new OutputStreamWriter( wp.getOutputStream() );
 	            BufferedReader rd = new BufferedReader( new InputStreamReader( wp.getInputStream() ) );
 	            
@@ -227,10 +229,22 @@ public class CreateScreen extends AbstractScreen {
 	            wr.write( "exit\n" );
 	            wr.flush();
 	            
+	            String rando = name + Double.toString(Math.random());
+	            MessageDigest md = null;
+				try {
+					md = MessageDigest.getInstance("SHA-256");
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	            md.update(rando.getBytes("UTF-8")); // Change this to "UTF-16" if needed
+	            byte[] digest = md.digest();
+	            
 	            game.walletvalues.setName(name);
 	            game.walletvalues.setPw(pw);
 	            game.walletvalues.setSeed(seed);
-	            game.walletvalues.setNode(nodetext.getText());;
+	            game.walletvalues.setNode(nodetext.getText());
+	            game.walletvalues.setUserAgent(digest.toString());
 	            
 	            PrintWriter infowriter = new PrintWriter(name + "info.txt", "UTF-8");
 	            infowriter.println("Wallet name: " + name);
@@ -245,6 +259,7 @@ public class CreateScreen extends AbstractScreen {
 	            confwriter.println("Wallet address: " + game.walletvalues.getAddress());
 	            confwriter.println("Wallet view key: " + game.walletvalues.getViewkey());
 	            confwriter.println("Node address: " + nodetext.getText());
+	            confwriter.println("User agent: " + digest.toString());
 	            confwriter.close();
 	            
 	            PrintWriter txwriter = new PrintWriter(name + "tx.txt", "UTF-8");

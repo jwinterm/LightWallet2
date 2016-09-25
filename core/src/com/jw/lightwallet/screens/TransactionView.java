@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.google.gson.Gson;
 import com.jw.lightwallet.LightWallet;
-import com.jw.lightwallet.daemon.DaemonResponse;
 import com.jw.lightwallet.tx.TxResponse;
 import com.jw.lightwallet.utils.BalanceValues;
 
@@ -72,7 +71,7 @@ public class TransactionView {
 		txlayout.add(idlabel).pad(padvalue).width(100);
 		txlayout.add(idvalue).pad(padvalue).width(600).row();
 		
-		sendbtn			= new TextButton("Payola!", game.uiSkin);
+		sendbtn			= new TextButton("Send payment!", game.uiSkin);
 		txlayout.add(new Label("", game.uiSkin));
 		txlayout.add(sendbtn).width(400);
 		

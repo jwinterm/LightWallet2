@@ -32,7 +32,7 @@ public class DaemonRPC {
 		                DaemonResponse daemonresponse = new Gson().fromJson(response, DaemonResponse.class);
 		                //System.out.print("GSON response is" + daemonresponse.getId());
 		                daemonvalues.setBlockheight(daemonresponse.getResult().getBlock_header().getHeight());
-		                daemonvalues.setDiff(daemonresponse.getResult().getBlock_header().getDifficulty());
+		                daemonvalues.setDiff((daemonresponse.getResult().getBlock_header().getDifficulty()));
 		                daemonvalues.setLastblocktime(daemonresponse.getResult().getBlock_header().getTimestamp());
 		                daemonvalues.setLastblockreward(daemonresponse.getResult().getBlock_header().getReward());
 		                daemonvalues.setStatus(daemonresponse.getResult().getStatus());

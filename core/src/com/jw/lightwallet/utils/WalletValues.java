@@ -8,7 +8,7 @@ public class WalletValues {
 	String		viewkey;
 	String		seed;
 	String		node;
-
+	String		useragent;
 	
 
 	public String getName() {
@@ -46,6 +46,12 @@ public class WalletValues {
 	}
 	public void setNode(String node) {
 		this.node = node;
+	}
+	public String getUserAgent() {
+		return useragent;
+	}
+	public void setUserAgent(String useragent) {
+		this.useragent = useragent;
 	}
 
 

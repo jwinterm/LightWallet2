@@ -81,15 +81,19 @@ public class MainScreen extends AbstractScreen {
 	double					calcbalance;
 	DecimalFormat 			df;
 	
+	// Wallet sync height
+	String height;
+	
 
 	public MainScreen(final LightWallet game) {
 		super(game);
 
-		wq 				= new AtomicQueue<String>(1000);
+		wq 				= new AtomicQueue<String>(100000);
 		txlist			= new ArrayList<Tx>();
 		txcount			= 0;
 		calcbalance		= 0;
 		df 				= new DecimalFormat("#.############");
+		height			= "";
 						
 		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
 		
@@ -166,9 +170,9 @@ public class MainScreen extends AbstractScreen {
 		stage.addActor(screenlayout);
 		
 		// Check tx file
-		dumptxlist();
+		// dumptxlist();
 	}
-	
+
 	public void show() {
 		super.show();
 		launchsimplewallet();
@@ -207,8 +211,8 @@ public class MainScreen extends AbstractScreen {
 	}
 	
 	public void runtasks() {
-		// Read simplewallet queue to check for transactions
 		readwalletqueue();
+		// Read simplewallet queue to check for transactions
 		if (fivesectimer == true) {
 			// Timer task to check balance from simplewallet
 			balancerpc.getinfo(balancevalues);
@@ -221,6 +225,12 @@ public class MainScreen extends AbstractScreen {
 				walletview.balancevalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
 				walletview.unlockedvalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
 			}
+			Gdx.app.log(LightWallet.LOG, "Height is at: " + height);
+			walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
+			if (height.equals(Integer.toString(daemonvalues.getBlockheight()))) {
+				walletview.syncvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
+			} else {walletview.syncvalue.setStyle(game.uiSkin.get("default", LabelStyle.class));}
+			// dumptxlist();
 			fivesectimer = false;
 			accum5s = 0;
 		}
@@ -234,7 +244,6 @@ public class MainScreen extends AbstractScreen {
 		if (sixtysectimer == true) {
 			// Timer task to try and save wallet every minute
 			walletsaverpc.trysave(walletview.getSavewalletlabel());
-			dumptxlist();
 			sixtysectimer = false;
 			accum60s = 0;
 		}
@@ -251,12 +260,12 @@ public class MainScreen extends AbstractScreen {
 			   public void run() {
 				   // Setup simplewallet command with the specified file, password, and node address
 				   try {
-					Gdx.app.log(LightWallet.LOG, "Command is: " + "simplewallet --wallet-file " + game.walletvalues.getName() 
+					Gdx.app.log(LightWallet.LOG, "Command is: " + "monero-wallet-cli --wallet-file " + game.walletvalues.getName() 
 							   + " --password " + game.walletvalues.getPw() + " --daemon-address " + game.walletvalues.getNode()
-							   + " --rpc-bind-port 19091 --log-level 2");
-					wp = Runtime.getRuntime().exec("simplewallet --wallet-file " + game.walletvalues.getName() 
+							   + " --rpc-bind-port 19091 --user-agent " + game.walletvalues.getUserAgent() + " --log-level 2");
+					wp = Runtime.getRuntime().exec("monero-wallet-cli --wallet-file " + game.walletvalues.getName() 
 							   + " --password " + game.walletvalues.getPw() + " --daemon-address " + game.walletvalues.getNode()
-							   + " --rpc-bind-port 19091 --log-level 2");
+							   + " --rpc-bind-port 19091 --user-agent " + game.walletvalues.getUserAgent() + " --log-level 2");
 					wr = new BufferedReader(new InputStreamReader(wp.getInputStream()));
 					while (true) {
 						String str = wr.readLine();
@@ -285,18 +294,10 @@ public class MainScreen extends AbstractScreen {
 		try{
 			// If the string contains "height" then update the daemon and wallet screen blockheight
 			if (queuepoll != null && queuepoll.contains("height:")) {
-				String height = queuepoll.split("height: ")[1].split(",")[0];
-				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
-				if (height.equals(Integer.toString(daemonvalues.getBlockheight()))) {
-					walletview.syncvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
-				} else {walletview.syncvalue.setStyle(game.uiSkin.get("default", LabelStyle.class));}
+				height = queuepoll.split("height: ")[1].split(",")[0];
 			}
 			else if (queuepoll != null && queuepoll.contains("height ")) {
-				String height = queuepoll.split("height ")[1].split(",")[0];
-				walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
-				if (height.equals(Integer.toString(daemonvalues.getBlockheight()))) {
-					walletview.syncvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
-				} else {walletview.syncvalue.setStyle(game.uiSkin.get("default", LabelStyle.class));}
+				height = queuepoll.split("height ")[1].split(",")[0];
 			}
 			// If the string contains "money" then create a tx and add it to the txlist
 			else if (queuepoll != null && queuepoll.contains("money")) {
@@ -332,7 +333,7 @@ public class MainScreen extends AbstractScreen {
 	public void dumptxlist() {
 		boolean newtx = true;  // this is a flag to reset whenever txid or type changes
 		Tx temptx = new Tx();
-		// Cycle through list of transactions from queue in last 60 s
+		// Cycle through list of transactions from queue in last 5 s
 		if (txlist.size() > 0) {
 			for (int i = 0; i < txlist.size(); i++) {
 				// If newtx flag then create a new temporary tx
@@ -388,8 +389,10 @@ public class MainScreen extends AbstractScreen {
 						historyview.getContainer().add(tmpbtn).fillX().row();
 						if (line.split(" | ")[0].equals("RECEIVED")) {
 							calcbalance += Double.parseDouble(tmpbtn.getText().toString().split(" | ")[2]);
+							Gdx.app.log(LightWallet.LOG, "Adding to balance: " + Double.parseDouble(tmpbtn.getText().toString().split(" | ")[2]));
 						} else {
 							calcbalance -= Double.parseDouble(tmpbtn.getText().toString().split(" | ")[2]);
+							Gdx.app.log(LightWallet.LOG, "Subracting from balance: " + Double.parseDouble(tmpbtn.getText().toString().split(" | ")[2]));
 						}
 						walletview.calcedvalue.setText(df.format(calcbalance) + " XMR");
 						txcount += 1;

@@ -34,7 +34,7 @@ public class LightWallet extends Game {
 		os = System.getProperty("os.name");
 		
 		if (os.contains("Windows")) {
-			simplewalletloc = dir + "\\" + "simplewallet.exe";
+			simplewalletloc = dir + "\\" + "monero-wallet-cli.exe";
 			System.out.println(simplewalletloc);
 		}
 		
@@ -53,6 +53,7 @@ public class LightWallet extends Game {
 				       if (line.contains("Wallet address: ")) {walletvalues.setAddress(line.split("address: ")[1]);}
 				       if (line.contains("view key: ")) {walletvalues.setViewkey(line.split("view key: ")[1]);}
 				       if (line.contains("Node address: ")) {walletvalues.setNode(line.split("address: ")[1]);}
+				       if (line.contains("User agent: ")) {walletvalues.setUserAgent(line.split("User agent: ")[1]);}
 			    }
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

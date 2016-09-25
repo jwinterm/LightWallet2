@@ -1,10 +1,13 @@
 package com.jw.lightwallet.utils;
 
+import com.badlogic.gdx.Gdx;
+import com.jw.lightwallet.LightWallet;
+
 public class DaemonValues {
 	
 	int 	blockheight;
-	int 	diff;
-	int 	hashrate;
+	long 	diff;
+	long 	hashrate;
 	long 	lastblocktime;
 	long	lastblockreward;
 	String status;
@@ -17,12 +20,12 @@ public class DaemonValues {
 		this.blockheight = blockheight;
 	}
 	
-	public int getDiff() {
+	public long getDiff() {
 		return diff;
 	}
-	public void setDiff(int diff) {
-		this.diff = diff;
-		this.hashrate = diff/120;
+	public void setDiff(long l) {
+		this.diff = l;
+		this.hashrate = l/120;
 	}
 	public float getHashrate() {
 		return hashrate/1e6f;

@@ -3,7 +3,7 @@ package com.jw.lightwallet.daemon;
 public class BlockHeader {
 	
 	int 		depth;
-	int 		difficulty;
+	long 		difficulty;
 	String 		hash;
 	int 		height;
 	int			major_version;
@@ -21,7 +21,7 @@ public class BlockHeader {
 	public void setDepth(int depth) {
 		this.depth = depth;
 	}
-	public int getDifficulty() {
+	public long getDifficulty() {
 		return difficulty;
 	}
 	public void setDifficulty(int difficulty) {
