@@ -20,17 +20,19 @@ public class WalletSaveRPC {
 		this.game = game;
 		swaddress = "http://localhost:19091/json_rpc";
 		store = "{\"jsonrpc\":\"2.0\",\"id\":\"test\",\"method\":\"store\",\"params\":[]}";
+//		store = "{\"jsonrpc\":\"2.0\",\"id\":\"test\",\"user-agent\":" + game.walletvalues.getUserAgent() + ",\"method\":\"store\",\"params\":[]}";
 	}
 	
 	public void trysave (final Label savestatuslabel) {
 		HttpRequest httpGet = new HttpRequest(HttpMethods.POST);
 		httpGet.setUrl(swaddress);
-		httpGet.setContent(store);		
+		httpGet.setContent(store);
+		httpGet.setHeader("User-Agent", game.walletvalues.getUserAgent());
 
 		Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {
 		        public void handleHttpResponse(HttpResponse httpResponse) {
 		                response = httpResponse.getResultAsString();
-		                //System.out.print("Balance response: " + response);
+//		                System.out.print("Save response: " + response);
 		                savestatuslabel.setText("Successfully saved");
 		                savestatuslabel.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
 		        }

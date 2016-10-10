@@ -6,6 +6,7 @@ public class DaemonResponse {
 	String jsonrpc;
 	DaemonResult result;
 	
+
 	public String getId() {
 		return id;
 	}

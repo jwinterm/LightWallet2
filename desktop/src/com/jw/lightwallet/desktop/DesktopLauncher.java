@@ -12,7 +12,7 @@ public class DesktopLauncher {
 		config.width = Constants.DESKTOP_WIDTH;
 		config.height = Constants.DESKTOP_HEIGHT;
 		config.title = "Monero LightWallet";
-		config.addIcon("icon32.png", FileType.Internal);
+		config.addIcon("assets/icon32.png", FileType.Internal);
 		new LwjglApplication(new LightWallet(), config);
 	}
 }

@@ -13,6 +13,8 @@ public class DaemonRPC {
 	public String 	address;
 	String			response;
 	String			getlastblock;
+	Gson 			gson;
+	DaemonResponse  daemonresponse = new DaemonResponse();
 	
 	public DaemonRPC () {
 		// address = "http://node.moneroclub.com:8880/json_rpc";
@@ -28,19 +30,17 @@ public class DaemonRPC {
 		Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {
 		        public void handleHttpResponse(HttpResponse httpResponse) {
 		                response = httpResponse.getResultAsString();
-		                //System.out.print("1st time response" + response);
-		                DaemonResponse daemonresponse = new Gson().fromJson(response, DaemonResponse.class);
-		                //System.out.print("GSON response is" + daemonresponse.getId());
-		                daemonvalues.setBlockheight(daemonresponse.getResult().getBlock_header().getHeight());
-		                daemonvalues.setDiff((daemonresponse.getResult().getBlock_header().getDifficulty()));
-		                daemonvalues.setLastblocktime(daemonresponse.getResult().getBlock_header().getTimestamp());
-		                daemonvalues.setLastblockreward(daemonresponse.getResult().getBlock_header().getReward());
-		                daemonvalues.setStatus(daemonresponse.getResult().getStatus());
+//		                System.out.println("1st time response" + response);
+		                daemonvalues.setBlockheight(Integer.parseInt(response.split("height\": ")[1].split(",")[0]));
+		                daemonvalues.setDiff(Long.parseLong(response.split("difficulty\": ")[1].split(",")[0]));
+		                daemonvalues.setLastblocktime(Long.parseLong(response.split("difficulty\": ")[1].split(",")[0]));
+		                daemonvalues.setLastblockreward(Long.parseLong(response.split("reward\": ")[1].split(",")[0]));
+		                daemonvalues.setStatus("OK");
 		        }
 		 
 		        public void failed(Throwable t) {
 		                response = "failed";
-		                //System.out.print("Failed response status is: " + response);
+		                System.out.print("Failed response status is: " + response);
 		                //do stuff here based on the failed attempt
 		        }
 

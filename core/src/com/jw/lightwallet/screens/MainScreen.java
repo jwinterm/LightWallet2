@@ -95,12 +95,12 @@ public class MainScreen extends AbstractScreen {
 		df 				= new DecimalFormat("#.############");
 		height			= "";
 						
-		Skin uiSkin 	= new Skin(Gdx.files.internal("skin/uiskin.json"));
+		Skin uiSkin 	= new Skin(Gdx.files.internal("assets/skin/uiskin.json"));
 		
 		daemonrpc 		= new DaemonRPC();
 		daemonvalues 	= new DaemonValues();
 		
-		balancerpc		= new BalanceRPC();
+		balancerpc		= new BalanceRPC(game);
 		balancevalues	= new BalanceValues();
 		
 		walletsaverpc	= new WalletSaveRPC(game);
@@ -112,7 +112,7 @@ public class MainScreen extends AbstractScreen {
 		screenlayout 	= new Table();
 		viewcontainer 	= new Table();
 		
-		logo 			= new Image(new Texture(Gdx.files.internal("logo.png")));
+		logo 			= new Image(new Texture(Gdx.files.internal("assets/logo.png")));
 
 		buttonrow		= new Table();
 		daemonbutton 	= new TextButton("Daemon", uiSkin);
@@ -216,16 +216,19 @@ public class MainScreen extends AbstractScreen {
 		if (fivesectimer == true) {
 			// Timer task to check balance from simplewallet
 			balancerpc.getinfo(balancevalues);
+//			Gdx.app.log(LightWallet.LOG, "Checked: " + balancevalues.getChecked());
 			walletview.balancevalue.setText(df.format(balancevalues.getBalance()/1e12) + " XMR");
 			walletview.unlockedvalue.setText(df.format(balancevalues.getUnlockedbalance()/1e12) + " XMR");
-			if (balancevalues.isChecked()) {
+			if (balancevalues.getChecked()) {
+//				Gdx.app.log(LightWallet.LOG, "Balance is checked.");
 				walletview.balancevalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
 				walletview.unlockedvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
 			} else {
+//				Gdx.app.log(LightWallet.LOG, "Balance is NOT checked.");
 				walletview.balancevalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
 				walletview.unlockedvalue.setStyle(game.uiSkin.get("redlabel", LabelStyle.class));
 			}
-			Gdx.app.log(LightWallet.LOG, "Height is at: " + height);
+//			Gdx.app.log(LightWallet.LOG, "Height is at: " + height);
 			walletview.syncvalue.setText(height + " / " + daemonvalues.getBlockheight());
 			if (height.equals(Integer.toString(daemonvalues.getBlockheight()))) {
 				walletview.syncvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));
@@ -263,7 +266,7 @@ public class MainScreen extends AbstractScreen {
 					Gdx.app.log(LightWallet.LOG, "Command is: " + "monero-wallet-cli --wallet-file " + game.walletvalues.getName() 
 							   + " --password " + game.walletvalues.getPw() + " --daemon-address " + game.walletvalues.getNode()
 							   + " --rpc-bind-port 19091 --user-agent " + game.walletvalues.getUserAgent() + " --log-level 2");
-					wp = Runtime.getRuntime().exec("monero-wallet-cli --wallet-file " + game.walletvalues.getName() 
+					wp = Runtime.getRuntime().exec(game.simplewalletloc + " --wallet-file " + game.walletvalues.getName() 
 							   + " --password " + game.walletvalues.getPw() + " --daemon-address " + game.walletvalues.getNode()
 							   + " --rpc-bind-port 19091 --user-agent " + game.walletvalues.getUserAgent() + " --log-level 2");
 					wr = new BufferedReader(new InputStreamReader(wp.getInputStream()));
@@ -292,6 +295,9 @@ public class MainScreen extends AbstractScreen {
 		// Poll wallet thread and check block height and if transaction data is in output
 		String queuepoll = wq.poll();
 		try{
+			if (queuepoll != null) {
+				Gdx.app.log(LightWallet.LOG, queuepoll);
+			}
 			// If the string contains "height" then update the daemon and wallet screen blockheight
 			if (queuepoll != null && queuepoll.contains("height:")) {
 				height = queuepoll.split("height: ")[1].split(",")[0];
@@ -325,6 +331,32 @@ public class MainScreen extends AbstractScreen {
 			    });
 			    failuredialog.key(Keys.ENTER, true); //sends "true" when the ENTER key is pressed
 			    failuredialog.show(stage);
+			}
+			else if (queuepoll != null && queuepoll.contains("Transaction successfully sent.")) {
+        		// Setup popup for successful tx
+            	final String txid = queuepoll.split("<<")[1].split(">>")[0];
+        	    final Dialog goodtxpopup = new Dialog("Succcessful transaction!", game.uiSkin, "dialog") {
+        	        public void result(Object obj) {
+        	            System.out.println("result "+obj);
+        	        }
+        	    };
+        	    Label goodtxpopuplabel = new Label("Successfully completed tx with tx is:\n" + txid, game.uiSkin);
+        	    goodtxpopuplabel.setWrap(true);
+        	    goodtxpopup.add(goodtxpopuplabel).width(400).row();
+        	    goodtxpopup.button("Copy tx id", true).addListener(new ClickListener() {
+        	        @Override
+        	        public void clicked (InputEvent event, float x, float y) {
+        	        	Gdx.app.getClipboard().setContents(txid);
+        	        }
+        	    });
+        	    goodtxpopup.button("Continue", true).addListener(new ClickListener() {
+        	        @Override
+        	        public void clicked (InputEvent event, float x, float y) {
+        	        	goodtxpopup.remove();
+        	        }
+        	    });	    		            	    
+        	    goodtxpopup.key(Keys.ENTER, true); //sends "true" when the ENTER key is pressed
+        	    goodtxpopup.show(stage);
 			}
 		} catch (NullPointerException e){e.printStackTrace();}
 	}

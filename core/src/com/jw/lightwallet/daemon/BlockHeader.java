@@ -25,6 +25,7 @@ public class BlockHeader {
 		return difficulty;
 	}
 	public void setDifficulty(int difficulty) {
+		System.out.println("Diff is now" + difficulty);
 		this.difficulty = difficulty;
 	}
 	public String getHash() {

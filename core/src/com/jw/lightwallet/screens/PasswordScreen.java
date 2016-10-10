@@ -45,7 +45,7 @@ public class PasswordScreen extends AbstractScreen {
 		super(game);
 		System.out.print("CreateScreen creating.");
 		
-		uiSkin 			= new Skin(Gdx.files.internal("skin/uiskin.json"));
+		uiSkin 			= new Skin(Gdx.files.internal("assets/skin/uiskin.json"));
 		padvalue = 20;
 		
 		stage 			= new Stage();
@@ -53,7 +53,7 @@ public class PasswordScreen extends AbstractScreen {
 		
 		screenlayout 	= new Table();
 		
-		logo 			= new Image(new Texture(Gdx.files.internal("logo.png")));
+		logo 			= new Image(new Texture(Gdx.files.internal("assets/logo.png")));
 		//logo.scaleBy(0.02f);
 		
 		instruction		= "Please enter your password in the password field below for the wallet" + game.walletvalues.getName() + ". "

@@ -61,7 +61,7 @@ public class CreateScreen extends AbstractScreen {
 		super(game);
 		System.out.print("CreateScreen creating.");
 		
-		uiSkin 			= new Skin(Gdx.files.internal("skin/uiskin.json"));
+		uiSkin 			= new Skin(Gdx.files.internal("assets/skin/uiskin.json"));
 		padvalue = 20;
 		
 		stage 			= new Stage();
@@ -69,14 +69,14 @@ public class CreateScreen extends AbstractScreen {
 		
 		screenlayout 	= new Table();
 		
-		logo 			= new Image(new Texture(Gdx.files.internal("logo.png")));
+		logo 			= new Image(new Texture(Gdx.files.internal("assets/logo.png")));
 		//logo.scaleBy(0.02f);
 		
 		instruction		= "Please enter a name for your wallet in the \"Wallet name\" field. This is typically wallet.bin, "
 				+ "but you can make it whatever you like (as long as it is alphanumberic and periods only). "
 				+ "Then please enter a strong password for your wallet that you will use to unlock, and then repeat it to ensure it is correct. "
 				+ "Your password can be any combination of characters and symbols on your keyboard (I think). "
-				+ "The default bitmonerod node is set for moneroclub, if you want to run a local daemon change the node field to http://localhost:18081.";
+				+ "The default bitmonerod node is set for moneroworld, if you want to run a local daemon change the node field to http://localhost:18081.";
 		
 		instructionlabel= new Label(instruction, uiSkin);
 		instructionlabel.setWrap(true);
@@ -195,7 +195,7 @@ public class CreateScreen extends AbstractScreen {
     	System.out.println("Starting creator");
 	    
 	        try {
-	            Process wp = Runtime.getRuntime().exec("monero-wallet-cli --generate-new-wallet " + name + " --password " + pw);
+	            Process wp = Runtime.getRuntime().exec(simplewalletloc + " --generate-new-wallet " + name + " --password " + pw);
 	            Writer wr = new OutputStreamWriter( wp.getOutputStream() );
 	            BufferedReader rd = new BufferedReader( new InputStreamReader( wp.getInputStream() ) );
 	            

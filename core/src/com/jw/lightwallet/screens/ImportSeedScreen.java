@@ -70,13 +70,13 @@ public class ImportSeedScreen extends AbstractScreen {
 		
 		screenlayout 	= new Table();
 		
-		logo 			= new Image(new Texture(Gdx.files.internal("logo.png")));
+		logo 			= new Image(new Texture(Gdx.files.internal("assets/logo.png")));
 		//logo.scaleBy(0.02f);
 		
 		instruction		= "Please enter a name for your wallet, the 25 word mnemonic seed to import in the seed field, "
 				+ " a password to unlock the wallet in the password field, "
 				+ "and then repeat the password to make sure you have it correct, this will be used to encrypt your newly restored wallet files. "
-				+ "The default bitmonerod node is set for moneroclub, if you want to run a local daemon change the node field to http://localhost:18081.";
+				+ "The default bitmonerod node is set for moneroworld, if you want to run a local daemon change the node field to http://localhost:18081.";
 		
 		instructionlabel= new Label(instruction, game.uiSkin);
 		instructionlabel.setWrap(true);
@@ -233,7 +233,7 @@ public class ImportSeedScreen extends AbstractScreen {
 	    
 	        
         try {
-            Process wp = Runtime.getRuntime().exec("monero-wallet-cli --restore-deterministic-wallet --daemon-address http://localhost:66666");
+            Process wp = Runtime.getRuntime().exec(simplewalletloc + " --restore-deterministic-wallet --wallet-file " + name + " --password " + pw + " --daemon-address http://localhost:66666");
             Writer wr = new OutputStreamWriter( wp.getOutputStream() );
             BufferedReader rd = new BufferedReader( new InputStreamReader( wp.getInputStream() ) );
             
@@ -243,35 +243,16 @@ public class ImportSeedScreen extends AbstractScreen {
             	str = rd.readLine();
 	            System.out.println(i + " " + str);
 	            i += 1;
-	            if (i > 1 && str.contains("Wallet")) {
+	            if (i > 0 && str.contains("Logging at")) {
 	            	break;
 	            }
             }
-            
-            wr.write( name + "\n" );
-            wr.flush();
-            wr.write( pw + "\n" );
-            wr.flush();
+
             wr.write( seed + "\n" );
             wr.flush();
-            
-            
-            MessageDigest md = null;
-            String rando = name + Double.toString(Math.random());
-			try {
-				md = MessageDigest.getInstance("SHA-256");
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            md.update(rando.getBytes("UTF-8")); // Change this to "UTF-16" if needed
-            byte[] digest = md.digest();
-            
-            game.walletvalues.setName(name);
-            game.walletvalues.setPw(pw);
-            game.walletvalues.setSeed(seed);
-            game.walletvalues.setNode(nodetext.getText());
-            game.walletvalues.setUserAgent(digest.toString());
+            wr.write("0\n" );
+            wr.flush();
+           
 
             
             while (true) {
@@ -294,6 +275,23 @@ public class ImportSeedScreen extends AbstractScreen {
             
             wr.write( "exit\n" );
             wr.flush();
+            
+            MessageDigest md = null;
+            String rando = name + Double.toString(Math.random());
+			try {
+				md = MessageDigest.getInstance("SHA-256");
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            md.update(rando.getBytes("UTF-8")); // Change this to "UTF-16" if needed
+            byte[] digest = md.digest();
+            
+            game.walletvalues.setName(name);
+            game.walletvalues.setPw(pw);
+            game.walletvalues.setSeed(seed);
+            game.walletvalues.setNode(nodetext.getText());
+            game.walletvalues.setUserAgent(digest.toString());
 
             
             PrintWriter infowriter = new PrintWriter(name + "info.txt", "UTF-8");

@@ -36,7 +36,7 @@ public class WizardScreen extends AbstractScreen {
 	public WizardScreen(final LightWallet game) {
 		super(game);
 		
-		uiSkin 			= new Skin(Gdx.files.internal("skin/uiskin.json"));
+		uiSkin 			= new Skin(Gdx.files.internal("assets/skin/uiskin.json"));
 		padvalue = 20;
 		
 		stage 			= new Stage();
@@ -44,10 +44,11 @@ public class WizardScreen extends AbstractScreen {
 		
 		screenlayout 	= new Table();
 		
-		logo 			= new Image(new Texture(Gdx.files.internal("logo.png")));
+		logo 			= new Image(new Texture(Gdx.files.internal("assets/logo.png")));
 
 		
 		wizardtext = "Hello. It seems this is the either the first time you are launching LightWallet or you have deleted your lightwallet.conf file. "
+				+ "You must have a copy of monero-wallet-cli executable in the same directory as the LightWallet executable. "
 				+ "Please select from the options below whether you would like to create a new wallet, import a wallet from a .keys file, "
 				+ "or import a wallet using your 25-word mnemonic seed.";
 		

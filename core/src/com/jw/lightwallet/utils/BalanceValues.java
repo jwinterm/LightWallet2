@@ -6,7 +6,7 @@ public class BalanceValues {
 	long		balance;
 	boolean		checked;
 	
-	public boolean isChecked() {
+	public boolean getChecked() {
 		return checked;
 	}
 	public void setChecked(boolean checked) {

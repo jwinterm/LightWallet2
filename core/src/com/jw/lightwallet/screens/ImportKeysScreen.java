@@ -66,14 +66,14 @@ public class ImportKeysScreen extends AbstractScreen {
 		
 		screenlayout 	= new Table();
 		
-		logo 			= new Image(new Texture(Gdx.files.internal("logo.png")));
+		logo 			= new Image(new Texture(Gdx.files.internal("assets/logo.png")));
 		//logo.scaleBy(0.02f);
 		
 		instruction		= "Please enter the full path location of your .keys file to import in the file location field; , "
 				+ "for instance: C:\\Users\\jw\\secretstuff\\wallet.keys or /home/jw/secretstuff/wallet.keys. "
 				+ "Then please enter your password to unlock the wallet. "
 				+ "The wallet keys file will be copied to the local directory and a new binary file will be created. "
-				+ "The default bitmonerod node is set for moneroclub, if you want to run a local daemon change the node field to http://localhost:18081.";
+				+ "The default bitmonerod node is set for moneroworld, if you want to run a local daemon change the node field to http://localhost:18081.";
 		
 		instructionlabel= new Label(instruction, game.uiSkin);
 		instructionlabel.setWrap(true);
@@ -222,7 +222,7 @@ public class ImportKeysScreen extends AbstractScreen {
 
 	    
         try {
-            Process wp = Runtime.getRuntime().exec("monero-wallet-cli --wallet-file " + name + " --password " + pw + " --daemon-address http://localhost:66666");
+            Process wp = Runtime.getRuntime().exec(simplewalletloc + " --wallet-file " + name + " --password " + pw + " --daemon-address http://localhost:66666");
             Writer wr = new OutputStreamWriter( wp.getOutputStream() );
             BufferedReader rd = new BufferedReader( new InputStreamReader( wp.getInputStream() ) );
             
@@ -234,25 +234,37 @@ public class ImportKeysScreen extends AbstractScreen {
                 	game.walletvalues.setAddress(str.split("wallet: ")[1]);
                 }
 	            i += 1;
-	            if (i > 5 && str.contains("****")) {
+	            if (i > 3 && str.contains("****")) {
 	            	break;
 	            }
             }
+        	str = rd.readLine();
+        	str = rd.readLine();
+        	str = rd.readLine();
+        	str = rd.readLine();
+        	str = rd.readLine();
+
             wr.write( "viewkey\n" );
             wr.flush();
 
         	str = rd.readLine();
-            System.out.println(i + " " + str.split(": ")[1]);
+//        	str = rd.readLine();
+//            System.out.println(i + " " + str.split(": ")[1]);
+            System.out.println(i + " " + str);
             i += 1;
-            game.walletvalues.setViewkey(str.split(": ")[1]);            
-            
+//            game.walletvalues.setViewkey(str.split(": ")[1]);            
+            game.walletvalues.setViewkey(str);            
+        	str = rd.readLine();
+
             wr.write( "seed\n" );
             wr.flush();
             
-        	str = rd.readLine();
-            System.out.println(i + " " + str.substring(str.indexOf(":"), str.length()));
+//        	str = rd.readLine();
+//            System.out.println(i + " " + str.substring(str.indexOf(":"), str.length()));
+            System.out.println(i + " " + str);
             i += 1;
-            game.walletvalues.setSeed(str.substring(str.indexOf(":"), str.length()));
+//            game.walletvalues.setSeed(str.substring(str.indexOf(":"), str.length()));
+            game.walletvalues.setSeed(str);
             
             wr.write( "exit\n" );
             wr.flush();

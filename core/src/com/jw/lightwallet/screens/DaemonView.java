@@ -75,7 +75,7 @@ public class DaemonView {
 	public void Update(DaemonValues daemonvalues) {
 		nodevalue.setText(game.walletvalues.getNode());
 		statusvalue.setText(daemonvalues.getStatus());
-		// Gdx.app.log(LightWallet.LOG, "Status value is: " + statusvalue.getText());
+		Gdx.app.log(LightWallet.LOG, "Status value is: " + statusvalue.getText());
 		if (statusvalue.getText().toString().equals("OK")) {statusvalue.setStyle(game.uiSkin.get("greenlabel", LabelStyle.class));}
 		heightvalue.setText(String.valueOf(daemonvalues.getBlockheight()));
 		hashratevalue.setText(new DecimalFormat("##.##").format(daemonvalues.getHashrate()) + " Mh/s");

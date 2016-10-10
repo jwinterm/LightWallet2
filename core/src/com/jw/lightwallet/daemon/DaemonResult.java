@@ -4,7 +4,7 @@ public class DaemonResult {
 	
 	BlockHeader block_header;
 	String status;
-	
+
 	
 	public BlockHeader getBlock_header() {
 		return block_header;

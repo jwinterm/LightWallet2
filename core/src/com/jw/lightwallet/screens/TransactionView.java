@@ -212,6 +212,8 @@ public class TransactionView {
 	    			httpGet.setUrl(swaddress);
 	    			httpGet.setContent(getbalance);
 	    			httpGet.setTimeOut(2500);
+	    			httpGet.setHeader("User-Agent", game.walletvalues.getUserAgent());
+
 	    			
 	    			Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {
 	    		        public void handleHttpResponse(HttpResponse httpResponse) {
@@ -222,36 +224,7 @@ public class TransactionView {
 	    		                System.out.println(txresponse.getResult().getTx_hash());
 	    		                
 	    		                String txid = txresponse.getResult().getTx_hash().substring(1, txresponse.getResult().getTx_hash().length()-1);;
-    		                	
-	    		                System.out.println("Tx id is: " + txid);
-	    		                System.out.println("Tx id length is: " + txid.length());
-
-	    		                if (txid.length() == 64) {
-	    		            		// Setup popup for successful tx
-	    		                	final String finaltxid = txid;
-	    		            	    final Dialog goodtxpopup = new Dialog("Succcessful transaction!", game.uiSkin, "dialog") {
-	    		            	        public void result(Object obj) {
-	    		            	            System.out.println("result "+obj);
-	    		            	        }
-	    		            	    };
-	    		            	    Label goodtxpopuplabel = new Label("Successfully completed tx with tx is:\n" + txid, game.uiSkin);
-	    		            	    goodtxpopuplabel.setWrap(true);
-	    		            	    goodtxpopup.add(goodtxpopuplabel).width(400).row();
-	    		            	    goodtxpopup.button("Copy tx id", true).addListener(new ClickListener() {
-	    		            	        @Override
-	    		            	        public void clicked (InputEvent event, float x, float y) {
-	    		            	        	Gdx.app.getClipboard().setContents(finaltxid);
-	    		            	        }
-	    		            	    });
-	    		            	    goodtxpopup.button("Continue", true).addListener(new ClickListener() {
-	    		            	        @Override
-	    		            	        public void clicked (InputEvent event, float x, float y) {
-	    		            	        	goodtxpopup.remove();
-	    		            	        }
-	    		            	    });	    		            	    
-	    		            	    goodtxpopup.key(Keys.ENTER, true); //sends "true" when the ENTER key is pressed
-	    		            	    goodtxpopup.show(stage);
-	    		                }	    		                
+    		                	  		                
 	    		        }
 	    		 
 	    		        public void failed(Throwable t) {

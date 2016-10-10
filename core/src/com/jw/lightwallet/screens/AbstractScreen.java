@@ -18,7 +18,7 @@ public class AbstractScreen implements Screen {
 	
 	public AbstractScreen (final LightWallet game) {
 		this.game 		= game;
-		this.font		= new BitmapFont(Gdx.files.internal("fonts/bauchaomaicha.fnt"));
+		this.font		= new BitmapFont(Gdx.files.internal("assets/fonts/bauchaomaicha.fnt"));
 		this.w 			= Gdx.graphics.getWidth();
 		this.h 			= Gdx.graphics.getHeight();
 		this.aspect 	= w/h;

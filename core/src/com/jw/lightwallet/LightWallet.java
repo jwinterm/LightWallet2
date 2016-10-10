@@ -35,12 +35,14 @@ public class LightWallet extends Game {
 		
 		if (os.contains("Windows")) {
 			simplewalletloc = dir + "\\" + "monero-wallet-cli.exe";
-			System.out.println(simplewalletloc);
+		} else {
+			simplewalletloc = dir + "/" + "monero-wallet-cli";
 		}
+		System.out.println(simplewalletloc);
 		
 		// Initialize logger and user interface skin
 		Gdx.app.log(LightWallet.LOG, "Launching application in " + dir + " on " + os);
-		uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+		uiSkin = new Skin(Gdx.files.internal("assets/skin/uiskin.json"));
 		
 		// Check if config file exists, if not launch setup wizard
 		File f = new File("lightwallet.conf");
