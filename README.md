@@ -1,4 +1,6 @@
 # LightWallet GUI
+**Update: 2017-01-07 LightWallet is no longer being maintained, and is expected to stop working after the upcoming hardfork enabling RingCT. Please use the official GUI for now (which also works with a remote node), or wait for another third party GUI by Jaxx or someone else to be released soon.**
+
 This is a GUI frontend that runs on top of simplewallet (in RPC mode). It is designed to work with a remote bitmonerod node by default, so that it can function as a lightweight wallet for most users. By default it uses Atrides open node at http://node.moneroworld.com:18081, but you can change the node it uses to a local node during setup or at any launch; to use a local bitmonerod instance set it as http://localhost:18081. 
 
 **This program is an alpha version, and although I don't think there is really any way to screw up your wallet, please exercise some modicum of caution.**
